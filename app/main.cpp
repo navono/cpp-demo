@@ -23,12 +23,6 @@
 
 #define USE_FOLLY 0
 
-static void print_uri(const folly::fbstring& address) {
-  const folly::Uri uri(address);
-  const auto authority = folly::format("The authority from {} is {}", uri.fbstr(), uri.authority());
-  std::cout << authority << std::endl;
-}
-
 /*
  * Simple main program that demonstrates how access
  * CMake definitions (here the version number) from source code.
@@ -37,29 +31,12 @@ int main() {
   std::cout << "C++ Boiler Plate v" << PROJECT_VERSION_MAJOR << "." << PROJECT_VERSION_MINOR << "."
             << PROJECT_VERSION_PATCH << "." << PROJECT_VERSION_TWEAK << std::endl;
 
-  //  std::string name = "World";
   folly::fbstring fs("World");
-  std::cout << fmt::format("Hello: {}!", fs.toStdString()) << std::endl;
-
-  std::system("cat ../LICENSE");
 
   // Use the default logger (stdout, multi-threaded, colored)
-  spdlog::info("Hello, {}!", "World");
+  spdlog::info(fmt::format("Hello: {}!", fs.toStdString()));
 
-  // create color multi threaded logger
-  auto console = spdlog::stdout_color_mt("console");
-  auto err_logger = spdlog::stderr_color_mt("stderr");
-  spdlog::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name)");
-
-  folly::ThreadedExecutor executor;
-  folly::Promise<folly::fbstring> promise;
-
-  folly::Future<folly::fbstring> future = promise.getSemiFuture().via(&executor);
-  folly::Future<folly::Unit> unit = std::move(future).thenValue(print_uri);
-  promise.setValue("https://conan.io/");
-  std::move(unit).get();
-
-  thread_pool_verify(24, 10000, 100000);
+  std::system("cat ../LICENSE");
 
   // Bring in the dummy class from the example source,
   // just to show that it is accessible from main.cpp.
