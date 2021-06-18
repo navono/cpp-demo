@@ -8,11 +8,6 @@
 
 #include <fmt/format.h>
 #include <folly/FBString.h>
-#include <folly/Format.h>
-#include <folly/Uri.h>
-#include <folly/executors/ThreadedExecutor.h>
-#include <folly/futures/Future.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
 #include <iostream>
