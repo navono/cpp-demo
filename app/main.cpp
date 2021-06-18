@@ -19,7 +19,6 @@
 
 #include "example.h"
 #include "exampleConfig.h"
-#include "threadPool.h"
 
 #define USE_FOLLY 0
 
