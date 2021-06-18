@@ -20,8 +20,6 @@
 #include "example.h"
 #include "exampleConfig.h"
 
-#define USE_FOLLY 0
-
 /*
  * Simple main program that demonstrates how access
  * CMake definitions (here the version number) from source code.
