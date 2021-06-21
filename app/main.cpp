@@ -59,7 +59,7 @@ int main() {
   promise.setValue("https://conan.io/");
   std::move(unit).get();
 
-  thread_pool_verify(24, 10000, 100000);
+//  thread_pool_verify(24, 10000, 100000);
 
   // Bring in the dummy class from the example source,
   // just to show that it is accessible from main.cpp.

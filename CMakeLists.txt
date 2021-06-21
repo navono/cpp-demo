@@ -34,9 +34,12 @@ include(Misc)
 include(Warnings)
 
 # Set up some extra Conan dependencies based on our needs before loading Conan
-set(CONAN_EXTRA_REQUIRES fmt/7.1.3 spdlog/1.8.5 folly/2020.08.10.00)
-set(CONAN_EXTRA_OPTIONS "")
-include(Conan)
+#set(CONAN_EXTRA_REQUIRES fmt/7.1.3 spdlog/1.8.5 folly/2020.08.10.00)
+#set(CONAN_EXTRA_OPTIONS "")
+#include(Conan)
+
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
 
 # Check for LTO support.
 find_lto(CXX)
@@ -53,7 +56,7 @@ set(SOURCES
 set(TESTFILES
     tests/main.cpp
 )
-set(LIBRARY_NAME engine)  # Default name for the library built from src/*.cpp (change if you wish)
+set(LIBRARY_NAME internal)  # Default name for the library built from src/*.cpp (change if you wish)
 
 # --------------------------------------------------------------------------------
 #                            Build! (Change as needed)
@@ -76,7 +79,7 @@ target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
 # Name of exec. and location of file.
 add_executable(main app/main.cpp app/threadPool_comp.cpp)
 
-target_link_libraries(main PRIVATE ${LIBRARY_NAME} PRIVATE CONAN_PKG::fmt CONAN_PKG::spdlog CONAN_PKG::folly)  # Link the executable to library (if it uses it).
+target_link_libraries(main PRIVATE ${LIBRARY_NAME} PRIVATE ${CONAN_LIBS})  # Link the executable to library (if it uses it).
 target_set_warnings(main ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 target_enable_lto(main optimized)  # enable link-time-optimization if available for non-debug configurations
 #target_compile_options(main PRIVATE "/WX-" )
