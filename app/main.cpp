@@ -12,6 +12,7 @@
 
 #include <iostream>
 
+#include "ctrl-c.h"
 #include "example.h"
 #include "exampleConfig.h"
 
@@ -29,6 +30,33 @@ int main() {
   spdlog::info(fmt::format("Hello: {}!", fs.toStdString()));
 
   std::system("cat ../LICENSE");
+
+  std::mutex wait_lock;
+  std::condition_variable wait_var;
+  const unsigned int kMaxCatches = 2;
+  unsigned int catches = 0;
+
+  unsigned int handler_id =
+      CtrlCLibrary::SetCtrlCHandler([&catches, &wait_lock, &wait_var](enum CtrlCLibrary::CtrlSignal event) -> bool {
+        switch (event) {
+          case CtrlCLibrary::kCtrlCSignal:
+            spdlog::info("Catch Ctrl+C");
+        }
+        std::lock_guard<std::mutex> locker(wait_lock);
+        ++catches;
+        wait_var.notify_all();
+        return true;
+      });
+  if (handler_id == CtrlCLibrary::kErrorID) {
+    spdlog::error("Can't set ctrl+c handler");
+    return 0;
+  }
+
+  spdlog::info(fmt::format("Press Ctrl+C {} times", kMaxCatches));
+
+  std::unique_lock<std::mutex> locker(wait_lock);
+  wait_var.wait(locker, [&catches, kMaxCatches]() { return catches >= kMaxCatches; });
+  CtrlCLibrary::ResetCtrlCHandler(handler_id);
 
   // Bring in the dummy class from the example source,
   // just to show that it is accessible from main.cpp.
