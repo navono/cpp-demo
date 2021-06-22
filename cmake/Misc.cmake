@@ -8,9 +8,16 @@ configure_file (
   "${PROJECT_SOURCE_DIR}/include/config.h.in"
   "${PROJECT_BINARY_DIR}/config.h"
 )
+
 # add the binary tree to the search path for include files
 # so that we will find config.h
 include_directories("${PROJECT_BINARY_DIR}")
+
+if(MSVC)
+    set(MY_VERSIONINFO_RC "${CMAKE_BINARY_DIR}/versionInfo.rc")
+    configure_file("${CMAKE_SOURCE_DIR}/include/versionInfo.rc.in"
+            "${MY_VERSIONINFO_RC}")
+endif()
 
 # Ask CMake to output a compile_commands.json file for use with things like Vim YCM.
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
