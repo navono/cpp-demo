@@ -12,9 +12,9 @@
 
 #include <iostream>
 
+#include "config.h"
 #include "ctrl-c.h"
 #include "example.h"
-#include "exampleConfig.h"
 
 /*
  * Simple main program that demonstrates how access

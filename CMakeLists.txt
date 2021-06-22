@@ -8,10 +8,9 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Set project name, version and laguages here. (change as needed)
-# Version numbers are available by including "exampleConfig.h" in 
-# the source. See exampleConfig.h.in for some more details.
-project(CPP_BOILERPLATE VERSION 1.2.3.4 LANGUAGES CXX)
-
+# Version numbers are available by including "config.h" in
+# the source. See config.h.in for some more details.
+project(CPP_BOILERPLATE VERSION 0.2.3.4 LANGUAGES CXX)
 
 # Options: Things you can set via commandline options to cmake (e.g. -DENABLE_LTO=[ON|OFF])
 option(ENABLE_WARNINGS_SETTINGS "Allow target_set_warnings to add flags and defines.
