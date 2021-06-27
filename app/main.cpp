@@ -29,8 +29,6 @@ int main() {
   // Use the default logger (stdout, multi-threaded, colored)
   spdlog::info(fmt::format("Hello: {}!", fs.toStdString()));
 
-  std::system("cat ../LICENSE");
-
   std::mutex wait_lock;
   std::condition_variable wait_var;
   const unsigned int kMaxCatches = 2;
