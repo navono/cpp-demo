@@ -21,8 +21,8 @@
  * CMake definitions (here the version number) from source code.
  */
 int main() {
-  std::cout << "C++ Demo v" << PROJECT_VERSION_MAJOR << "." << PROJECT_VERSION_MINOR << "."
-            << PROJECT_VERSION_PATCH << "." << PROJECT_VERSION_TWEAK << std::endl;
+  std::cout << "C++ Demo v" << PROJECT_VERSION_MAJOR << "." << PROJECT_VERSION_MINOR << "." << PROJECT_VERSION_PATCH
+            << "." << PROJECT_VERSION_TWEAK << std::endl;
 
   folly::fbstring fs("World");
 
