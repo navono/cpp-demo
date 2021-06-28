@@ -14,15 +14,17 @@
 
 #include "config.h"
 #include "ctrl-c.h"
+#include "dynalo/dynalo.hpp"
 #include "example.h"
+#include "interface.h"
 
 /*
  * Simple main program that demonstrates how access
  * CMake definitions (here the version number) from source code.
  */
 int main() {
-  std::cout << "C++ Demo v" << PROJECT_VERSION_MAJOR << "." << PROJECT_VERSION_MINOR << "."
-            << PROJECT_VERSION_PATCH << "." << PROJECT_VERSION_TWEAK << std::endl;
+  std::cout << "C++ Demo v" << PROJECT_VERSION_MAJOR << "." << PROJECT_VERSION_MINOR << "." << PROJECT_VERSION_PATCH
+            << "." << PROJECT_VERSION_TWEAK << std::endl;
 
   folly::fbstring fs("World");
 
@@ -51,6 +53,13 @@ int main() {
   }
 
   spdlog::info(fmt::format("Press Ctrl+C {} times", kMaxCatches));
+
+  dynalo::library lib("./foo.dll");
+  auto pfnCreateFoo = lib.get_function<IModule*()>("CreateFoo");
+  if (pfnCreateFoo) {
+    auto f = pfnCreateFoo();
+    f->hello();
+  }
 
   std::unique_lock<std::mutex> locker(wait_lock);
   wait_var.wait(locker, [&catches, kMaxCatches]() { return catches >= kMaxCatches; });

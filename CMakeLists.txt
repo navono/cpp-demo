@@ -79,6 +79,8 @@ target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
 # Name of exec. and location of file.
 add_executable(main app/main.cpp ${MY_VERSIONINFO_RC})
 
+add_definitions(-DDYNALO_IMPORT_SYMBOLS)
+
 # Link the executable to library (if it uses it).
 target_link_libraries(main PRIVATE ${LIBRARY_NAME} PRIVATE ${CONAN_LIBS})
 
@@ -108,6 +110,8 @@ set_target_properties(
         CXX_STANDARD_REQUIRED YES 
         CXX_EXTENSIONS NO
 )
+
+add_subdirectory(foo)
 
 # Set up tests (see tests/CMakeLists.txt).
 add_subdirectory(tests)
