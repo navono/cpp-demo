@@ -48,8 +48,9 @@ find_lto(CXX)
 # --------------------------------------------------------------------------------
 # All .cpp files in src/
 set(SOURCES
-    src/example.cpp
-    src/ctrl-c.cpp
+        src/example.cpp
+        src/ctrl-c.cpp
+        src/threadPool.cpp
 )
 
 # All .cpp files in tests/
@@ -77,7 +78,11 @@ target_set_warnings(${LIBRARY_NAME} ENABLE ALL AS_ERROR ALL DISABLE Annoying)
 # Add an executable for the file app/main.cpp.
 # If you add more executables, copy these lines accordingly.
 # Name of exec. and location of file.
-add_executable(main app/main.cpp ${MY_VERSIONINFO_RC})
+add_executable(main
+        app/main.cpp
+        app/threadPool_comp.cpp
+        ${MY_VERSIONINFO_RC}
+)
 
 # Link the executable to library (if it uses it).
 target_link_libraries(main PRIVATE ${LIBRARY_NAME} PRIVATE ${CONAN_LIBS})
