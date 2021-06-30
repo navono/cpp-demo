@@ -55,6 +55,8 @@ int main() {
 
   dynalo::library lib("./foo.dll");
   auto pfnCreateFoo = lib.get_function<IModule*()>("CreateFoo");
+
+  folly::DMPSCQueue<int, false> queue(100);
   if (pfnCreateFoo) {
     auto f = pfnCreateFoo();
     f->hello();
@@ -62,6 +64,11 @@ int main() {
     folly::ThreadedExecutor executor;
     auto fut2 = std::move(fut).via(&executor);
     std::move(fut2).thenValue([&](int i) { LOG_INFO(logger, "val: {}", i); });
+
+    f->set_queue(queue);
+    int v;
+    queue.try_dequeue(v);
+    LOG_INFO(logger, "v {}", v);
   }
 
   std::unique_lock<std::mutex> locker(wait_lock);

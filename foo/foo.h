@@ -12,7 +12,11 @@ class foo : public IModule {
 
   void hello() override;
   folly::SemiFuture<int> get_fut() override;
+  //  std::unique_ptr<folly::DMPSCQueue<int, false>> get_queue() override;
+  bool set_queue(folly::DMPSCQueue<int, false>& queue) override;
 
  private:
   folly::Promise<int> promise_;
+  //  std::unique_ptr<folly::DMPSCQueue<int, false>> queue_;
+  folly::DMPSCQueue<int, false> queue_;
 };
