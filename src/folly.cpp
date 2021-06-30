@@ -1,6 +1,7 @@
 #include <folly/FBString.h>
 #include <folly/Format.h>
 #include <folly/Uri.h>
+#include <folly/concurrency/DynamicBoundedQueue.h>
 #include <folly/executors/CPUThreadPoolExecutor.h>
 #include <folly/executors/ThreadedExecutor.h>
 #include <folly/futures/Future.h>
@@ -65,9 +66,30 @@ void executor_test(quill::Logger* logger) {
   executor.stop();
 }
 
+void dynamic_queue_test(quill::Logger* logger) {
+  folly::DMPSCQueue<int, false, 10> queue(1000);
+
+  auto deadline = std::chrono::seconds(2);
+
+  std::thread reader([&queue, &logger, &deadline] {
+    for (;;) {
+      int val;
+      if (queue.try_dequeue_for(val, deadline)) {
+        LOG_INFO(logger, "get value {}", val);
+      }
+    }
+  });
+
+  for (;;) {
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+    queue.try_enqueue(3);
+  }
+}
+
 void folly_test() {
   auto logger = quill::get_logger("app");
 
   //  basic_test(logger);
-  executor_test(logger);
+  //  executor_test(logger);
+  dynamic_queue_test(logger);
 }
