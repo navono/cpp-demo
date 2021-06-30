@@ -1,5 +1,7 @@
 [requires]
 folly/2020.08.10.00
+cppzmq/4.7.1
+quill/1.6.2
 
 [generators]
 cmake

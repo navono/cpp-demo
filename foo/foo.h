@@ -1,13 +1,17 @@
 #pragma once
 
 #include <folly/futures/Future.h>
+#include <quill/Quill.h>
+
+#include <zmq.hpp>
+#include <zmq_addon.hpp>
 
 #include "dynalo/symbol_helper.hpp"
 #include "interface.h"
 
 class foo : public IModule {
  public:
-  foo();
+  foo(std::shared_ptr<zmq::context_t> ctx);
   ~foo() override;
 
   void hello() override;
@@ -16,7 +20,11 @@ class foo : public IModule {
   bool set_queue(folly::DMPSCQueue<int, false>& queue) override;
 
  private:
+  void subscriberThread1();
+
+ private:
+  std::shared_ptr<quill::Logger> logger_;
   folly::Promise<int> promise_;
-  //  std::unique_ptr<folly::DMPSCQueue<int, false>> queue_;
-  folly::DMPSCQueue<int, false> queue_;
+
+  std::shared_ptr<zmq::context_t> ctx_;
 };

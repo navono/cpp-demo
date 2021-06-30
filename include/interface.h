@@ -3,6 +3,8 @@
 #include <folly/concurrency/DynamicBoundedQueue.h>
 #include <folly/futures/Future.h>
 
+#include <zmq.hpp>
+
 #include "dynalo/symbol_helper.hpp"
 
 class IModule {
@@ -15,4 +17,4 @@ class IModule {
   virtual bool set_queue(folly::DMPSCQueue<int, false>& queue) = 0;
 };
 
-DYNALO_EXPORT IModule* DYNALO_CALL CreateFoo();
+DYNALO_EXPORT IModule* DYNALO_CALL CreateFoo(std::shared_ptr<zmq::context_t> ctx);

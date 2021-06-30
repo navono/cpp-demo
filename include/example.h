@@ -1,5 +1,7 @@
 #pragma once
 
+#include <zmq.hpp>
+
 /**
  * This is a dummy class to demonstrate features of the boiler plate.
  */
@@ -15,6 +17,8 @@ class Dummy {
    */
   static bool doSomething();
 };
+
+void publisherThread(zmq::context_t* ctx);
 
 #ifdef ENABLE_DOCTEST_IN_LIBRARY
 #include "doctest.h"
