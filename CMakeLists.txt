@@ -51,7 +51,8 @@ set(SOURCES
         src/example.cpp
         src/ctrl-c.cpp
         src/threadPool.cpp
-        src/folly.cpp)
+        src/folly.cpp src/MemcacheClient.cpp
+        )
 
 # All .cpp files in tests/
 set(TESTFILES
