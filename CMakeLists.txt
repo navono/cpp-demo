@@ -50,7 +50,7 @@ find_lto(CXX)
 set(SOURCES
     src/example.cpp
     src/ctrl-c.cpp
-)
+        src/task.cpp include/task.h)
 
 # All .cpp files in tests/
 set(TESTFILES

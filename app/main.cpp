@@ -13,6 +13,7 @@
 #include "ctrl-c.h"
 #include "example.h"
 #include "logger.h"
+#include "task.h"
 
 /*
  * Simple main program that demonstrates how access
@@ -49,6 +50,9 @@ int main() {
   }
 
   LOG_INFO(logger, "Press Ctrl+C {} times", kMaxCatches);
+
+  auto task = std::make_shared<Task>();
+  task->basic();
 
   std::unique_lock<std::mutex> locker(wait_lock);
   wait_var.wait(locker, [&catches, kMaxCatches]() { return catches >= kMaxCatches; });
