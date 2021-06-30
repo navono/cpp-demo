@@ -8,6 +8,7 @@
 
 #include <fmt/format.h>
 #include <folly/FBString.h>
+#include <folly/executors/ThreadedExecutor.h>
 
 #include "config.h"
 #include "ctrl-c.h"
@@ -58,6 +59,9 @@ int main() {
     auto f = pfnCreateFoo();
     f->hello();
     auto fut = f->get_fut();
+    folly::ThreadedExecutor executor;
+    auto fut2 = std::move(fut).via(&executor);
+    std::move(fut2).thenValue([&](int i) { LOG_INFO(logger, "val: {}", i); });
   }
 
   std::unique_lock<std::mutex> locker(wait_lock);
