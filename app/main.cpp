@@ -59,6 +59,7 @@ int main() {
   if (pfnCreateFoo) {
     auto f = pfnCreateFoo();
     f->hello();
+    auto fut = f->get_fut();
   }
 
   std::unique_lock<std::mutex> locker(wait_lock);
