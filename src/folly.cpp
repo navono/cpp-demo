@@ -28,18 +28,30 @@ static void print_uri(quill::Logger* logger, const folly::fbstring& address, fol
   }
 }
 
+folly::SemiFuture<std::string> get_fut() {
+  folly::Promise<std::string> p;
+  p.setValue("hello");
+  return p.getSemiFuture();
+}
+
 void basic_test(quill::Logger* logger) {
   folly::ThreadedExecutor executor;
-  LOG_INFO(logger, "making Promise");
-  folly::Promise<int> p;
-  folly::Future<int> f = p.getSemiFuture().via(&executor);
+  //  LOG_INFO(logger, "making Promise");
+  //  folly::Promise<int> p;
+  //  folly::Future<int> f = p.getSemiFuture().via(&executor);
+  //
+  //  auto f2 = std::move(f).thenValue([&logger](int x) { LOG_INFO(logger, "{}", x); });
+  //
+  //  LOG_INFO(logger, "fulfilling Promise");
+  //  p.setValue(42);
+  //
+  //  std::move(f2).wait();
+  //  LOG_INFO(logger, "Promise fulfilled");
 
-  auto f2 = std::move(f).thenValue([&logger](int x) { LOG_INFO(logger, "{}", x); });
-
-  LOG_INFO(logger, "fulfilling Promise");
-  p.setValue(42);
-
-  std::move(f2).wait();
+  folly::SemiFuture<std::string> fut = get_fut();
+  auto fut2 = std::move(fut).via(&executor);
+  std::move(fut2).thenValue([&logger](std::string x) { LOG_INFO(logger, "{}", x); });
+  std::move(fut2).wait();
   LOG_INFO(logger, "Promise fulfilled");
 }
 
@@ -86,10 +98,12 @@ void dynamic_queue_test(quill::Logger* logger) {
   }
 }
 
+void t(quill::Logger* logger) {}
+
 void folly_test() {
   auto logger = quill::get_logger("app");
 
-  //  basic_test(logger);
+  basic_test(logger);
   //  executor_test(logger);
-  dynamic_queue_test(logger);
+  //  dynamic_queue_test(logger);
 }
