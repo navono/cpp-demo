@@ -1,7 +1,7 @@
 #pragma once
 
-#include "interface.h"
 #include "dynalo/symbol_helper.hpp"
+#include "interface.h"
 
 class foo : public IModule {
  public:
