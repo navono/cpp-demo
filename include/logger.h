@@ -10,8 +10,8 @@ static std::shared_ptr<quill::Logger> initLogger(const std::string& logFilename 
   quill::start(false, {});
 
   auto formatter = QUILL_STRING(
-      "[%(ascii_time)] #%(process) %(filename)/%(function_name):%(lineno) : [%(logger_name)] %(level_name) "
-      "%(message)");
+      "[%(ascii_time)] #%(process).%(thread) %(filename)/%(function_name:):%(lineno:<8) [%(logger_name)] "
+      "%(level_name) %(message)");
 
   auto file_handler = quill::rotating_file_handler(logFilename, "a", 1024 * 1024 * 5, 5);
   file_handler->set_pattern(formatter, "%D %H:%M:%S.%Qms %z", quill::Timezone::LocalTime);
