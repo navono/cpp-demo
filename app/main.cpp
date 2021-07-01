@@ -58,15 +58,13 @@ int main() {
   //  zmq::context_t ctx{0};
   auto zmqCtx = std::make_shared<zmq::context_t>(0);
 
-  dynalo::library lib("./foo.dll");
-  auto pfnCreateFoo = lib.get_function<IModule*(std::shared_ptr<zmq::context_t> ctx)>("CreateFoo");
-
   auto executor = std::make_unique<folly::CPUThreadPoolExecutor>(4);
   auto fut = folly::makeFuture(true);
   auto exeFut = std::move(fut).via(executor.get());
-  std::move(exeFut).thenValue([&](bool b) { publisherThread(zmqCtx.get()); });
+  std::move(exeFut).thenValue([&](bool b) { publisherThread(logger, zmqCtx.get()); });
 
-  //  folly::DMPSCQueue<int, false> queue(100);
+  dynalo::library lib("./foo.dll");
+  auto pfnCreateFoo = lib.get_function<IModule*(std::shared_ptr<zmq::context_t> ctx)>("CreateFoo");
   if (pfnCreateFoo) {
     auto f = pfnCreateFoo(zmqCtx);
 
@@ -74,15 +72,9 @@ int main() {
     auto exeFut_f = std::move(fut_f).via(executor.get());
     std::move(exeFut_f).thenValue([&](bool b) { f->hello(); });
 
-    //    auto fut = f->get_fut();
-    //
-    //    auto fut2 = std::move(fut).via(&executor);
-    //    std::move(fut2).thenValue([&](int i) { LOG_INFO(logger, "val: {}", i); });
-    //
-    //    f->set_queue(queue);
-    //    int v;
-    //    queue.try_dequeue(v);
-    //    LOG_INFO(logger, "v {}", v);
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    LOG_INFO(logger, "stop foo subscriber");
+    //    f->stop();
   }
 
   LOG_INFO(logger, "Test");

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <quill/Quill.h>
+
 #include <zmq.hpp>
 
 /**
@@ -18,7 +20,7 @@ class Dummy {
   static bool doSomething();
 };
 
-void publisherThread(zmq::context_t* ctx);
+void publisherThread(const std::shared_ptr<quill::Logger>& logger, zmq::context_t* ctx);
 
 #ifdef ENABLE_DOCTEST_IN_LIBRARY
 #include "doctest.h"

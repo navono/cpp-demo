@@ -11,8 +11,9 @@ class IModule {
  public:
   virtual ~IModule() = default;  // <= important!
   virtual void hello() = 0;
+  virtual void stop() = 0;
 
-  virtual folly::SemiFuture<int> get_fut() = 0;
+  //  virtual folly::SemiFuture<int> get_fut() = 0;
   //  virtual std::unique_ptr<folly::DMPSCQueue<int, false>> get_queue() = 0;
   virtual bool set_queue(folly::DMPSCQueue<int, false>& queue) = 0;
 };
