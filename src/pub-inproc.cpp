@@ -7,8 +7,8 @@
 void publisherThread(const std::shared_ptr<quill::Logger>& logger, zmq::context_t* ctx) {
   //  Prepare publisher
   zmq::socket_t publisher(*ctx, zmq::socket_type::pub);
-  publisher.bind("inproc://#1");
-  //  publisher.bind("tcp://*:5555");
+  //  publisher.bind("inproc://#1");
+  publisher.bind("tcp://*:5555");
 
   // Give the subscribers a chance to connect, so they don't lose any messages
   std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -23,7 +23,7 @@ void publisherThread(const std::shared_ptr<quill::Logger>& logger, zmq::context_
       publisher.send(zmq::str_buffer("C"), zmq::send_flags::sndmore);
       publisher.send(zmq::str_buffer("Message in C envelope"));
       std::this_thread::sleep_for(std::chrono::seconds(1));
-      LOG_INFO(logger, "send message to TOPIC A, B, C");
+      //      LOG_INFO(logger, "send message to TOPIC A, B, C");
     } catch (const std::exception& e) {
       LOG_ERROR(logger, "catch exception {}", e.what());
     }

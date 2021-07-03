@@ -56,7 +56,7 @@ int main() {
   LOG_INFO(logger, "Press Ctrl+C {} times", kMaxCatches);
 
   //  zmq::context_t ctx{0};
-  auto zmqCtx = std::make_shared<zmq::context_t>(0);
+  auto zmqCtx = std::make_shared<zmq::context_t>(1);
 
   auto executor = std::make_unique<folly::CPUThreadPoolExecutor>(4);
   auto fut = folly::makeFuture(true);
@@ -74,7 +74,7 @@ int main() {
 
     std::this_thread::sleep_for(std::chrono::seconds(5));
     LOG_INFO(logger, "stop foo subscriber");
-    //    f->stop();
+    f->stop();
   }
 
   LOG_INFO(logger, "Test");
