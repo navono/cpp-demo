@@ -7,7 +7,7 @@ const rimraf = require('rimraf');
 process.env.PATH += (path.delimiter + path.join(process.cwd(), 'node_modules', '.bin'));
 
 const PROTO_DIR = path.join(__dirname, '../proto');
-const OUT_DIR = path.join(__dirname, '../src/proto');
+const OUT_DIR = path.join(__dirname, '../include/proto');
 const PROTOC_GEN_TS_PATH = path.join(__dirname, '../node_modules/.bin/protoc-gen-ts.cmd');
 
 if (fs.existsSync(OUT_DIR)) {
