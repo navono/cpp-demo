@@ -1,9 +1,10 @@
-// Executables must have the following defined if the library contains
-// doctest definitions. For builds with this disabled, e.g. code shipped to
-// users, this can be left out.
 #ifdef ENABLE_DOCTEST_IN_LIBRARY
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
+#endif
+
+#ifdef _WIN32
+#include <winsock2.h>
 #endif
 
 #include <fmt/format.h>
@@ -55,21 +56,30 @@ int main() {
 
   LOG_INFO(logger, "Press Ctrl+C {} times", kMaxCatches);
 
-  //  zmq::context_t ctx{0};
-  auto zmqCtx = std::make_shared<zmq::context_t>(1);
+  const std::string xPub_addr = "inproc://internal.data";
+  // const std::string xPub_addr = "tcp://127.0.0.1:5555";
+  const std::string xSub_addr = "tcp://127.0.0.1:5556";
 
+  auto zmqCtx = std::make_shared<zmq::context_t>(1);
   auto executor = std::make_unique<folly::CPUThreadPoolExecutor>(4);
-  auto fut = folly::makeFuture(true);
-  auto exeFut = std::move(fut).via(executor.get());
-  std::move(exeFut).thenValue([&](bool b) { publisherThread(logger, zmqCtx.get()); });
+
+  // 开启代理
+  folly::makeFuture(true).via(executor.get()).thenValue([&](bool b) {
+    xPubSubProxy(xPub_addr, xSub_addr, logger, zmqCtx);
+  });
+
+  // 开启订阅者
+  folly::makeFuture(true).via(executor.get()).thenValue([&](bool b) { xSubscriber(xPub_addr, logger, zmqCtx); });
 
   dynalo::library lib("./foo.dll");
-  auto pfnCreateFoo = lib.get_function<IModule*(std::shared_ptr<zmq::context_t> ctx)>("CreateFoo");
+  auto pfnCreateFoo = lib.get_function<IModule*(std::shared_ptr<zmq::context_t>, const std::string&)>("CreateFoo");
   if (pfnCreateFoo) {
-    auto f = pfnCreateFoo(zmqCtx);
+    auto f = pfnCreateFoo(zmqCtx, xSub_addr);
 
     auto fut_f = folly::makeFuture(true);
     auto exeFut_f = std::move(fut_f).via(executor.get());
+
+    // 开启发布者
     std::move(exeFut_f).thenValue([&](bool b) { f->hello(); });
 
     std::this_thread::sleep_for(std::chrono::seconds(5));

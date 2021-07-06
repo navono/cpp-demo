@@ -9,46 +9,22 @@
 
 using namespace std;
 
-foo::foo(std::shared_ptr<zmq::context_t> ctx) : ctx_(ctx) { logger_ = initLogger("foo"); };
+foo::foo(std::shared_ptr<zmq::context_t> ctx, const std::string& subAddr) : ctx_(ctx), subAddr_(subAddr) {
+  logger_ = initLogger("foo");
+};
 
 foo::~foo() = default;
 
 void foo::hello() {
   LOG_INFO(logger_, "hello from foo.dll");
 
-  //  folly::CPUThreadPoolExecutor executor{4};
-  //  auto fut = folly::makeFuture(true);
-  //  auto exeFut = std::move(fut).via(&executor);
-  //  std::move(exeFut).thenValue([&](bool b) { subscriberThread1(); });
-
   auto executor = std::make_unique<folly::CPUThreadPoolExecutor>(4);
-  auto fut = folly::makeFuture(true);
-  auto exeFut = std::move(fut).via(executor.get());
-  std::move(exeFut).thenValue([&](bool b) { subscriberThread1(); });
-
-  //  auto fut = folly::makeFuture(true);
-  //  auto exeFut = std::move(fut).via(executor.get());
-  //  std::move(exeFut).thenValue([&](bool b) { publisherThread(zmqCtx.get()); });
+  folly::makeFuture(true).via(executor.get()).thenValue([&](bool b) { xPublisher(); });
 }
-
-// folly::SemiFuture<int> foo::get_fut() {
-//  promise_.setValue(100);
-//  return promise_.getSemiFuture();
-//}
 
 void foo::stop() { exitSignal_.set_value(); }
 
-bool foo::set_queue(folly::DMPSCQueue<int, false>& queue) {
-  //  queue_ = std::move(queue);
-  //  queue.set_queue(queue_);
-  //  set_queue(queue)
-  //  queue_(std::move(queue));
-
-  queue.try_enqueue(200);
-  return true;
-}
-
-void foo::subscriberThread1() {
+void foo::subscriberThread() {
   auto zmqCtx = std::make_shared<zmq::context_t>(1);
   zmq::socket_t subscriber(*zmqCtx, zmq::socket_type::sub);
   subscriber.connect("tcp://localhost:5555");
@@ -62,7 +38,6 @@ void foo::subscriberThread1() {
   subscriber.set(zmq::sockopt::subscribe, "B");
 
   auto fut = getExitFut();
-
   while (fut.wait_for(std::chrono::milliseconds(100)) == std::future_status::timeout) {
     // Receive all parts of the message
     std::vector<zmq::message_t> recv_msgs;
@@ -96,6 +71,26 @@ void foo::subscriberThread1() {
   LOG_INFO(logger_, "exit subscriber thread");
 }
 
+void foo::xPublisher() {
+  auto ctx = std::make_shared<zmq::context_t>(1);
+
+  zmq::socket_t publisher(*ctx, zmq::socket_type::pub);
+  publisher.connect(subAddr_);
+
+  auto fut = getExitFut();
+  while (fut.wait_for(std::chrono::milliseconds(100)) == std::future_status::timeout) {
+    publisher.send(zmq::str_buffer("A"), zmq::send_flags::sndmore);
+    publisher.send(zmq::str_buffer("Message in A envelope from foo"));
+    publisher.send(zmq::str_buffer("B"), zmq::send_flags::sndmore);
+    publisher.send(zmq::str_buffer("Message in B envelope from foo"));
+    publisher.send(zmq::str_buffer("C"), zmq::send_flags::sndmore);
+    publisher.send(zmq::str_buffer("Message in C envelope from foo"));
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    LOG_INFO(logger_, "send message to TOPIC A, B, C");
+  }
+}
+
 std::future<void> foo::getExitFut() { return exitSignal_.get_future(); }
 
 // std::unique_ptr<folly::DMPSCQueue<int, false>> foo::get_queue() {
@@ -103,4 +98,6 @@ std::future<void> foo::getExitFut() { return exitSignal_.get_future(); }
 //  return queue_;
 //}
 
-IModule* DYNALO_CALL CreateFoo(std::shared_ptr<zmq::context_t> ctx) { return new foo(ctx); }
+IModule* DYNALO_CALL CreateFoo(std::shared_ptr<zmq::context_t> ctx, const std::string& subAddr) {
+  return new foo(ctx, subAddr);
+}

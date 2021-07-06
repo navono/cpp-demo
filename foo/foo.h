@@ -12,18 +12,17 @@
 
 class foo : public IModule {
  public:
-  explicit foo(std::shared_ptr<zmq::context_t> ctx);
+  explicit foo(std::shared_ptr<zmq::context_t> ctx, const std::string& subAddr);
   ~foo() override;
 
   void hello() override;
   void stop() override;
 
-  //  folly::SemiFuture<int> get_fut() override;
-  //  std::unique_ptr<folly::DMPSCQueue<int, false>> get_queue() override;
-  bool set_queue(folly::DMPSCQueue<int, false>& queue) override;
-
  private:
-  void subscriberThread1();
+  void subscriberThread();
+
+  void xPublisher();
+
   std::future<void> getExitFut();
 
  private:
@@ -31,4 +30,5 @@ class foo : public IModule {
   std::promise<void> exitSignal_;
 
   std::shared_ptr<zmq::context_t> ctx_;
+  std::string subAddr_;
 };
