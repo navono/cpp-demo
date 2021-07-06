@@ -1,0 +1,23 @@
+{
+  "name": "cpp-demo",
+  "version": "1.0.0",
+  "description": "使用 `RelWithDebInfo` 模式下，使用独立的 `conanfile.txt` 用于管理依赖，否则会出现一些错误。",
+  "main": "index.js",
+  "scripts": {
+    "proto": "node scripts/proto"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/navono/cpp-demo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/navono/cpp-demo/issues"
+  },
+  "homepage": "https://github.com/navono/cpp-demo#readme",
+  "devDependencies": {
+    "grpc-tools": "^1.11.2",
+    "grpc_tools_node_protoc_ts": "^5.3.0",
+    "rimraf": "^3.0.2",
+    "shelljs": "^0.8.4"
+  }
+}

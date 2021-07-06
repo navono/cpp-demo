@@ -33,6 +33,7 @@
 *.x
 
 .idea
+node_modules
 
 # Build directory
 build/
