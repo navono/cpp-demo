@@ -1,5 +1,5 @@
 // package: tutorial
-// file: person.proto
+// file: addressbook.proto
 
 /* tslint:disable */
 /* eslint-disable */

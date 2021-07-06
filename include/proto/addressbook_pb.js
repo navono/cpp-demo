@@ -1,4 +1,4 @@
-// source: person.proto
+// source: addressbook.proto
 /**
  * @fileoverview
  * @enhanceable

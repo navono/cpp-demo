@@ -1,6 +1,6 @@
 #include "example.h"
 
-#include "proto/person.pb.h"
+#include "proto/addressbook.pb.h"
 
 Dummy::Dummy() = default;
 

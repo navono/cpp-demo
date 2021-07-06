@@ -50,7 +50,7 @@ find_lto(CXX)
 set(SOURCES
     src/example.cpp
     src/ctrl-c.cpp
-        include/proto/person.pb.cc
+        include/proto/addressbook.pb.cc
 )
 
 # All .cpp files in tests/
