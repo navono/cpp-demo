@@ -32,6 +32,8 @@
 *.app
 *.x
 
+!scripts/**/*
+
 .idea
 /node_modules
 
