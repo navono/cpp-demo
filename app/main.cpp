@@ -9,16 +9,58 @@
 #include <fmt/format.h>
 #include <folly/FBString.h>
 
+#include <fstream>
+
 #include "config.h"
 #include "ctrl-c.h"
 #include "example.h"
 #include "logger.h"
 
-/*
- * Simple main program that demonstrates how access
- * CMake definitions (here the version number) from source code.
- */
-int main() {
+using namespace std;
+
+// Reads the entire address book from a file,
+//   adds one person based on user input, then writes it back out to the same
+//   file.
+int addAddressBook(int argc, char* argv[]) {
+  // Verify that the version of the library that we linked against is
+  // compatible with the version of the headers we compiled against.
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  if (argc != 2) {
+    cerr << "Usage:  " << argv[0] << " ADDRESS_BOOK_FILE" << endl;
+    return -1;
+  }
+
+  tutorial::AddressBook address_book;
+
+  {
+    // Read the existing address book.
+    fstream input(argv[1], ios::in | ios::binary);
+    if (!input) {
+      cout << argv[1] << ": File not found.  Creating a new file." << endl;
+    } else if (!address_book.ParseFromIstream(&input)) {
+      cerr << "Failed to parse address book." << endl;
+      return -1;
+    }
+  }
+
+  // Add an address.
+  Dummy::PromptForAddress(address_book.add_people());
+
+  {
+    // Write the new address book back to disk.
+    fstream output(argv[1], ios::out | ios::trunc | ios::binary);
+    if (!address_book.SerializeToOstream(&output)) {
+      cerr << "Failed to write address book." << endl;
+      return -1;
+    }
+  }
+
+  // Optional:  Delete all global objects allocated by libprotobuf.
+  google::protobuf::ShutdownProtobufLibrary();
+}
+
+int main(int argc, char* argv[]) {
   auto logger = initLogger();
 
   LOG_INFO(logger, "C++ Demo v{}.{}.{}.{}", PROJECT_VERSION_MAJOR, PROJECT_VERSION_MINOR, PROJECT_VERSION_PATCH,
@@ -49,6 +91,13 @@ int main() {
   }
 
   LOG_INFO(logger, "Press Ctrl+C {} times", kMaxCatches);
+
+  //  addAddressBook(argc, argv);
+
+  tutorial::Person person;
+  person.set_email("123@123.com");
+  person.set_id(2);
+  auto s = person.SerializeAsString();
 
   std::unique_lock<std::mutex> locker(wait_lock);
   wait_var.wait(locker, [&catches, kMaxCatches]() { return catches >= kMaxCatches; });
