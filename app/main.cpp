@@ -12,6 +12,7 @@
 #include "config.h"
 #include "ctrl-c.h"
 #include "example.h"
+#include "factorial.h"
 #include "logger.h"
 
 /*
@@ -49,6 +50,9 @@ int main() {
   }
 
   LOG_INFO(logger, "Press Ctrl+C {} times", kMaxCatches);
+
+  LOG_INFO(logger, "Factorial<5>::value: {}", Factorial<5>::value);
+  LOG_INFO(logger, "Factorial<10>::value: {}", Factorial<10>::value);
 
   std::unique_lock<std::mutex> locker(wait_lock);
   wait_var.wait(locker, [&catches, kMaxCatches]() { return catches >= kMaxCatches; });
