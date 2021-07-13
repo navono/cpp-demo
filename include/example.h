@@ -17,6 +17,7 @@ class Dummy {
 };
 
 void f(auto&& x);
+
 void testRvalue();
 
 #ifdef ENABLE_DOCTEST_IN_LIBRARY
