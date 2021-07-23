@@ -50,8 +50,8 @@ find_lto(CXX)
 set(SOURCES
     src/example.cpp
     src/ctrl-c.cpp
-    src/rvalue.cpp
-)
+        src/rvalue.cpp
+        src/varadic.cpp)
 
 # All .cpp files in tests/
 set(TESTFILES
