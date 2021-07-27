@@ -52,7 +52,8 @@ int main() {
 
   spdlog::info(fmt::format("Press Ctrl+C {} times", kMaxCatches));
 
-  testRvalue();
+  //  testRvalue();
+  testRegex();
 
   std::unique_lock<std::mutex> locker(wait_lock);
   wait_var.wait(locker, [&catches, kMaxCatches]() { return catches >= kMaxCatches; });

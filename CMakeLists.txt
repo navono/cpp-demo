@@ -51,7 +51,7 @@ set(SOURCES
     src/example.cpp
     src/ctrl-c.cpp
         src/rvalue.cpp
-        src/varadic.cpp)
+        src/varadic.cpp src/regex.cpp)
 
 # All .cpp files in tests/
 set(TESTFILES
