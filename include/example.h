@@ -18,8 +18,6 @@ class Dummy {
   static bool doSomething();
 };
 
-void testDto(quill::Logger* logger);
-
 #ifdef ENABLE_DOCTEST_IN_LIBRARY
 #include "doctest.h"
 TEST_CASE("we can have tests in headers if we want") {

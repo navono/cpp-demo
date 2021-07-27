@@ -4,9 +4,9 @@
 #include <json_dto/pub.hpp>
 #include <regex>
 #include <string>
+#include <variant>
 
-// read_json_value and write_json_value for std::tm are defined as
-// template specialization inside json_dto namespace.
+// read_json_value and write_json_value for std::tm are defined as template specialization inside json_dto namespace.
 namespace json_dto {
 
 template <>
@@ -70,8 +70,7 @@ class bounded_value_t {
   }
 };
 
-// read_json_value and write_json_value for bounded_value_t are
-// defined in bounded_types namespace.
+// read_json_value and write_json_value for bounded_value_t are defined in bounded_types namespace.
 // They will be found by argument dependent lookup.
 template <typename T, T min, T max, T default_value>
 void read_json_value(bounded_value_t<T, min, max, default_value>& value, const rapidjson::Value& from) {
@@ -104,8 +103,7 @@ std::ostream& operator<<(std::ostream& to, level_t l) {
   return (to << (low == l ? "low" : normal == l ? "normal" : "high"));
 }
 
-// read_json_value and write_json_value for level_t are
-// defined in importance_levels namespace.
+// read_json_value and write_json_value for level_t are defined in importance_levels namespace.
 // They will be found by argument dependent lookup.
 void read_json_value(level_t& value, const rapidjson::Value& from) {
   using json_dto::read_json_value;
@@ -132,6 +130,32 @@ void write_json_value(const level_t& value, rapidjson::Value& object, rapidjson:
 }
 
 } /* namespace importance_levels */
+
+namespace tag_value {
+
+struct value_t {
+  std::string s_v;
+  int32_t i_v;
+  uint32_t ui_v;
+  double d_v;
+  float f_v;
+  bool b_v;
+};
+
+using tag_valut_t = std::optional<value_t>;
+// using tag_valut_t = std::variant<int, float, std::string, bool>;
+
+void read_json_value(tag_valut_t& value, const rapidjson::Value& from) {
+  using json_dto::read_json_value;
+
+  std::string representation;
+  read_json_value(representation, from);
+}
+
+void write_json_value(const tag_valut_t& value, rapidjson::Value& object, rapidjson::MemoryPoolAllocator<>& allocator) {
+}
+
+}  // namespace tag_value
 
 // Message.
 struct message_t {
@@ -161,6 +185,7 @@ struct message_t {
 
   // Importance of message.
   importance_levels::level_t m_importance;
+  //  tag_value::tag_valut_t m_value;
 
   template <typename Json_Io>
   void json_io(Json_Io& io) {

@@ -4,6 +4,7 @@ quill/1.6.2
 openssl/1.1.1k
 folly/2020.08.10.00
 json_dto/0.2.13
+nlohmann_json/3.9.1
 
 [generators]
 cmake

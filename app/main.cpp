@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include "ctrl-c.h"
-#include "example.h"
+#include "json.h"
 #include "logger.h"
 
 /*
@@ -50,14 +50,13 @@ int main() {
 
   LOG_INFO(logger, "Press Ctrl+C {} times", kMaxCatches);
 
-  testDto(logger);
+  //  testDto(logger);
+  //  testNlohmannJson(logger);
+  testFollyDynamic(logger);
 
   std::unique_lock<std::mutex> locker(wait_lock);
   wait_var.wait(locker, [&catches, kMaxCatches]() { return catches >= kMaxCatches; });
   CtrlCLibrary::ResetCtrlCHandler(handler_id);
 
-  // Bring in the dummy class from the example source,
-  // just to show that it is accessible from main.cpp.
-  //  Dummy d = Dummy();
-  return Dummy::doSomething() ? 0 : -1;
+  return 0;
 }
