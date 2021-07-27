@@ -5,8 +5,7 @@
 #include <string>
 #include <vector>
 
-static std::shared_ptr<quill::Logger> initLogger(const std::string& logFilename = "app.log",
-                                                 const std::string& name = "app") {
+static quill::Logger* initLogger(const std::string& logFilename = "app.log", const std::string& name = "app") {
   quill::start(false, {});
 
   auto formatter = QUILL_STRING(
@@ -21,5 +20,5 @@ static std::shared_ptr<quill::Logger> initLogger(const std::string& logFilename 
 
   auto logger = quill::create_logger(name.c_str(), {file_handler, console_handler});
   logger->set_log_level(quill::LogLevel::TraceL3);
-  return std::shared_ptr<quill::Logger>(logger);
+  return logger;
 };

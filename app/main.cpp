@@ -50,6 +50,8 @@ int main() {
 
   LOG_INFO(logger, "Press Ctrl+C {} times", kMaxCatches);
 
+  testDto(logger);
+
   std::unique_lock<std::mutex> locker(wait_lock);
   wait_var.wait(locker, [&catches, kMaxCatches]() { return catches >= kMaxCatches; });
   CtrlCLibrary::ResetCtrlCHandler(handler_id);
