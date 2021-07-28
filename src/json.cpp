@@ -103,5 +103,18 @@ void testFollyDynamic(quill::Logger* logger) {
   // json序列化
   auto str = folly::toJson(sonOfAJ);
   LOG_INFO(logger, "str {}", str);
-  //  assert(jsonDocument.compare(str) == 0);
+
+  auto dynamicArray = folly::dynamic::array();
+  folly::dynamic obj1 = folly::dynamic::object;
+  obj1["name"] = "M_1";
+  obj1["value"] = "test";
+  dynamicArray.push_back(obj1);
+
+  folly::dynamic obj2 = folly::dynamic::object;
+  obj2["name"] = "M_1";
+  obj2["value"] = 12;
+  dynamicArray.push_back(obj2);
+
+  auto str2 = folly::toJson(dynamicArray);
+  LOG_INFO(logger, "str2 {}", str2);
 }
