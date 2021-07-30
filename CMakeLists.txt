@@ -28,6 +28,7 @@ include(Colors)
 include(CTest)
 include(Doctest)
 include(Documentation)
+include(DependencyGraph)
 include(LTO)
 include(Misc)
 include(Warnings)
@@ -42,6 +43,9 @@ conan_basic_setup()
 
 # Check for LTO support.
 find_lto(CXX)
+
+
+gen_dep_graph("png")
 
 # --------------------------------------------------------------------------------
 #                         Locate files (change as needed).
