@@ -28,9 +28,6 @@ int main(int argc, char **argv) {
 
 #endif
 
-  lib::Hello h;
-  h.print();
-
   /*
    * No I/O threads are involved in passing messages using the inproc transport.
    * Therefore, if you are using a ØMQ context for in-process messaging only you
@@ -48,9 +45,15 @@ int main(int argc, char **argv) {
 
   auto thread2 = std::async(std::launch::async, SubscriberThread2, &ctx, addr);
   //  auto thread3 = std::async(std::launch::async, SubscriberThread3, &ctx, addr);
+  auto thread4 = std::async(std::launch::async, [&ctx, addr] {
+    lib::Hello h;
+    h.sayHello(&ctx, addr);
+  });
+
   thread1.wait();
   thread2.wait();
   //  thread3.wait();
+  thread4.wait();
 
   std::cout << "Hello, World!" << std::endl;
   return 0;
@@ -72,7 +75,7 @@ void PublisherThread(zmq::context_t *ctx, const std::string &addr) {
     publisher.send(zmq::str_buffer("Message in B envelope"));
     publisher.send(zmq::str_buffer("C"), zmq::send_flags::sndmore);
     publisher.send(zmq::str_buffer("Message in C envelope"));
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
   }
 }
 

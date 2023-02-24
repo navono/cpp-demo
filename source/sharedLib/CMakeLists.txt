@@ -7,12 +7,11 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 include(get_platform)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-#set                   (CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 set(CMAKE_DEBUG_POSTFIX D)
-
 
 if (TARGET_PLATFORM_WINDOWS)
     add_compile_options(/W4)
@@ -75,23 +74,41 @@ include(import_library)
 #   import_library(Boost_INCLUDE_DIRS Boost_IOSTREAMS_LIBRARY_DEBUG Boost_IOSTREAMS_LIBRARY_RELEASE)
 # - You may also set the PROJECT_INCLUDE_DIRS and PROJECT_LIBRARIES instead of using import_library.
 
-list(APPEND PROJECT_LIBRARIES)
-list(APPEND PROJECT_INCLUDE_DIRS ${PROJECT_HEADERS})
+if (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+    list(APPEND PROJECT_LIB_DIR ${CMAKE_SOURCE_DIR}/third_party/libs/Debug)
+elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
+    list(APPEND PROJECT_LIB_DIR ${CMAKE_SOURCE_DIR}/third_party/libs/Release)
+endif ()
+
+list(APPEND PROJECT_LIBRARIES
+        libzmq)
+
+if (TARGET_PLATFORM_WINDOWS)
+    list(APPEND PROJECT_LIBRARIES
+            #            hid.lib
+            ws2_32.lib
+            iphlpapi.lib)
+endif ()
 
 ##################################################    Targets     ##################################################
-#message(STATUS "PROJECT_FILES: ${PROJECT_FILES}")
-#message(STATUS "PROJECT_INCLUDE_DIRS: ${PROJECT_INCLUDE_DIRS}")
-#message(STATUS "PROJECT_LIBRARIES: ${PROJECT_HEADERS}")
+include_directories(${PROJECT_INCLUDE_DIRS})
+link_directories(${PROJECT_LIB_DIR}) # 要在 add_executable 前
+link_libraries(${PROJECT_LIBRARIES})
+
+if (TARGET_PLATFORM_WINDOWS)
+    add_compile_definitions(UNICODE _UNICODE)
+endif ()
 
 add_library(${PROJECT_NAME} SHARED ${PROJECT_FILES})
 add_library(demo::sharedLib ALIAS ${PROJECT_NAME})
 
+add_compile_definitions(ZMQ_STATIC)
 target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:include> PRIVATE source/sharedLib)
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_LIBRARIES})
+        $<INSTALL_INTERFACE:include> PRIVATE ./include)
+#target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
+#target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_LIBRARIES})
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_COMPILE_DEFINITIONS})
 target_compile_options(${PROJECT_NAME} PUBLIC ${PROJECT_COMPILE_OPTIONS})
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
@@ -100,6 +117,11 @@ if (NOT BUILD_SHARED_LIBS)
     string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
     set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS -D${PROJECT_NAME_UPPER}_STATIC)
 endif ()
+
+message(STATUS "PROJECT_INCLUDE_DIRS = ${PROJECT_INCLUDE_DIRS}")
+message(STATUS "PROJECT_LIB_DIR = ${PROJECT_LIB_DIR}")
+message(STATUS "PROJECT_LIBRARIES = ${PROJECT_LIBRARIES}")
+message(STATUS "PROJECT_COMPILE_OPTIONS = ${PROJECT_COMPILE_OPTIONS}")
 
 ##################################################    Postbuild   ##################################################
 include(GenerateExportHeader)

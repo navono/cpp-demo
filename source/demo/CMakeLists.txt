@@ -98,6 +98,8 @@ elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
 endif ()
 
 list(APPEND PROJECT_LIBRARIES
+        cxxopts
+        libzmq
         demo::sharedLib
         #        fmt
         #        spdlog::spdlog
@@ -106,8 +108,7 @@ list(APPEND PROJECT_LIBRARIES
         #        sqlite_orm::sqlite_orm
         #        nlohmann_json::nlohmann_json
         #        Matplot++::matplot
-        libzmq
-        cxxopts)
+        )
 
 if (TARGET_PLATFORM_WINDOWS)
     list(APPEND PROJECT_LIBRARIES
@@ -158,7 +159,6 @@ if (TARGET_PLATFORM_WINDOWS)
             WIN32_LEAN_AND_MEAN
             # Prevents Windows.h from defining min/max as macros
             NOMINMAX)
-
 endif ()
 
 message(STATUS "PROJECT_INCLUDE_DIRS = ${PROJECT_INCLUDE_DIRS}")
