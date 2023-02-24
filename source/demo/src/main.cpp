@@ -1,3 +1,5 @@
+#include "sharedLib/lib.h"
+
 #include <cppzmq/zmq.hpp>
 #include <cppzmq/zmq_addon.hpp>
 #include <thread>
@@ -25,6 +27,9 @@ int main(int argc, char **argv) {
   //  NUIKIT_DEBUG(fmt::format("optDaemon: {}, optDebug: {}", Config::optDaemon, Config::optDebug));
 
 #endif
+
+  lib::Hello h;
+  h.print();
 
   /*
    * No I/O threads are involved in passing messages using the inproc transport.

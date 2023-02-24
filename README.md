@@ -1,5 +1,17 @@
 # Cpp Demo
 
+## 库
+
+使用 `CMake` 生成动态库，不会自动生成 `.lib` 文件，需要为工程创建导出头文件，也就是在 `CMakeLists.txt` 中增加
+
+> set(PROJECT_EXPORT_HPP ${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/export.hpp)
+
+然后在头文件中使用其生成的宏，例如：
+
+> SHAREDLIB_EXPORT
+
+这样，才会在 CMake 的 build 目录下为其生成 `.lib` 文件。具体参考 `sharedLib 工程`。
+
 ## 第三方库集成
 
 ### Boost

@@ -45,8 +45,8 @@ file(GLOB_RECURSE PROJECT_MISC *.bat *.gitignore *.md *.py *.sh *.txt)
 #aux_source_directory(./src/configData PROJECT_SOURCES)
 
 if (TARGET_PLATFORM_WINDOWS)
-#      message(STATUS "Build CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}/version.rc.in")
-#      message(STATUS "Build CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
+    #      message(STATUS "Build CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}/version.rc.in")
+    #      message(STATUS "Build CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)
     list(APPEND PROJECT_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
     add_compile_definitions(_WINDOWS)
@@ -98,19 +98,20 @@ elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
 endif ()
 
 list(APPEND PROJECT_LIBRARIES
-#        fmt
-#        spdlog::spdlog
-#        cppcommon
-#        sago::platform_folders
-#        sqlite_orm::sqlite_orm
-#        nlohmann_json::nlohmann_json
-#        Matplot++::matplot
+        demo::sharedLib
+        #        fmt
+        #        spdlog::spdlog
+        #        cppcommon
+        #        sago::platform_folders
+        #        sqlite_orm::sqlite_orm
+        #        nlohmann_json::nlohmann_json
+        #        Matplot++::matplot
         libzmq
         cxxopts)
 
 if (TARGET_PLATFORM_WINDOWS)
     list(APPEND PROJECT_LIBRARIES
-#            hid.lib
+            #            hid.lib
             ws2_32.lib
             iphlpapi.lib)
 endif ()
@@ -156,8 +157,8 @@ if (TARGET_PLATFORM_WINDOWS)
             # Prevents Windows.h from adding unnecessary includes
             WIN32_LEAN_AND_MEAN
             # Prevents Windows.h from defining min/max as macros
-            NOMINMAX
-            )
+            NOMINMAX)
+
 endif ()
 
 message(STATUS "PROJECT_INCLUDE_DIRS = ${PROJECT_INCLUDE_DIRS}")
@@ -168,16 +169,14 @@ message(STATUS "PROJECT_COMPILE_OPTIONS = ${PROJECT_COMPILE_OPTIONS}")
 
 ##################################################    Postbuild   ##################################################
 # copy third party dll
-#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-#        COMMAND_EXPAND_LISTS
-#        )
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND_EXPAND_LISTS)
 
 #add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 #        COMMAND ${CMAKE_COMMAND} -E copy_directory
 #        ${CMAKE_SOURCE_DIR}/config
-#        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config
-#        )
+#        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/config)
 
 
 ##################################################  Installation  ##################################################
