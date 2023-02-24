@@ -1,0 +1,7 @@
+#pragma once
+
+#define DEMO_VER_MAJOR 0
+#define DEMO_VER_MINOR 1
+#define DEMO_VER_PATCH 0
+
+#define DEMO_VERSION (DEMO_VER_MAJOR * 10000 + DEMO_VER_MINOR * 100 + DEMO_VER_PATCH)
