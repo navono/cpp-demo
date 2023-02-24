@@ -29,10 +29,13 @@ message(STATUS "Build output: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 ##################################################    Sources     ##################################################
 #message(STATUS "Build PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
+#message(STATUS "Build CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
 file(GLOB_RECURSE PROJECT_HEADERS
         ${PROJECT_SOURCE_DIR}/src/include/*.h
         ${PROJECT_SOURCE_DIR}/src/include/*.hpp
-        ${PROJECT_SOURCE_DIR}/src/include/*.ipp)
+        ${CMAKE_SOURCE_DIR}/include/*.h
+        ${CMAKE_SOURCE_DIR}/include/*.hpp
+        ${CMAKE_SOURCE_DIR}/include/*.ipp)
 file(GLOB_RECURSE PROJECT_SOURCES
         ${PROJECT_SOURCE_DIR}/src/*.c
         ${PROJECT_SOURCE_DIR}/src/*.cpp
@@ -102,15 +105,14 @@ list(APPEND PROJECT_LIBRARIES
 #        sqlite_orm::sqlite_orm
 #        nlohmann_json::nlohmann_json
 #        Matplot++::matplot
-#        libzmq
-        cxxopts
-        )
+        libzmq
+        cxxopts)
 
 if (TARGET_PLATFORM_WINDOWS)
     list(APPEND PROJECT_LIBRARIES
 #            hid.lib
-#            iphlpapi.lib
-            )
+            ws2_32.lib
+            iphlpapi.lib)
 endif ()
 
 
@@ -128,12 +130,9 @@ else ()
     add_executable(${PROJECT_NAME} ${PROJECT_FILES})
 endif ()
 
-message(STATUS "BUILD_INTERFACE =  ${BUILD_INTERFACE}")
-message(STATUS "INSTALL_INTERFACE =  ${INSTALL_INTERFACE}")
-message(STATUS "CMAKE_CURRENT_SOURCE_DIR =  ${CMAKE_CURRENT_SOURCE_DIR}")
-message(STATUS "CMAKE_CURRENT_BINARY_DIR =  ${CMAKE_CURRENT_BINARY_DIR}")
-
+add_compile_definitions(ZMQ_STATIC)
 target_include_directories(${PROJECT_NAME} PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:include> PRIVATE ..)
