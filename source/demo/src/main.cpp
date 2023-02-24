@@ -88,7 +88,7 @@ void SubscriberThread2(zmq::context_t *ctx, const std::string &addr) {
   subscriber.set(zmq::sockopt::subscribe, "A");
   subscriber.set(zmq::sockopt::subscribe, "B");
 
-  while (1) {
+  while (true) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // Receive all parts of the message
     std::vector<zmq::message_t> recv_msgs;

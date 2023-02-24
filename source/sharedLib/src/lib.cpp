@@ -3,7 +3,7 @@
 #include <iostream>
 
 namespace lib {
-void Hello::sayHello(zmq::context_t *ctx, const std::string &addr) {
+[[noreturn]] void Hello::sayHello(zmq::context_t *ctx, const std::string &addr) {
   std::cout << "Hello Shared Library!" << std::endl;
 
   //  Prepare our context and subscriber
@@ -13,7 +13,7 @@ void Hello::sayHello(zmq::context_t *ctx, const std::string &addr) {
   //  Thread3 opens ALL envelopes
   subscriber.set(zmq::sockopt::subscribe, "");
 
-  while (1) {
+  while (true) {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     // Receive all parts of the message
     std::vector<zmq::message_t> recv_msgs;

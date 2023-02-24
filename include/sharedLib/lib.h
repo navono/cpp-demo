@@ -9,7 +9,7 @@
 namespace lib {
 class SHAREDLIB_EXPORT Hello {
  public:
-  void sayHello(zmq::context_t *ctx, const std::string &addr);
+  [[noreturn]] void sayHello(zmq::context_t *ctx, const std::string &addr);
 };
 
 }  // namespace lib
