@@ -2,7 +2,7 @@ BasedOnStyle: Google
 DerivePointerAlignment: false
 PointerAlignment: Right
 ColumnLimit: 120
-SortIncludes: false
+SortIncludes: Never
 
 # Default for clang-8, changed in later clangs. Set explicitly for forwards
 # compatibility for students with modern clangs
