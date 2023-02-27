@@ -51,7 +51,28 @@
 2. 在 `CMakeLists.txt` 中，如果是使用静态库，增加 `ZMQ_STATIC` 宏， 增加静态库 `libzmq`，同时 `Windows` 平台还需要增加 `
    iphlpapi.lib`
 
-### 编译问题
+### find_package 无法查找到库 XXX
+
+1. `github` 上查找此库的源码，同时确认相关的版本
+2. `git clone` 到本地后，使用 `CMake` 构建并安装
+
+   > cmake -B_builds_debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX="D:\\cmake_install"
+   >
+   > cmake --build _builds_debug --config Debug --target install
+
+   注意上述的构建目录、构建类型、安装目录
+3. 在目标工具中，例如 `CLion` 增加环境变量；也可在系统中增加系统环境变量
+
+   > CMAKE_INCLUDE_PATH="D:\cmake_install\include"
+   >
+   > CMAKE_LIBRARY_PATH="D:\cmake_install\lib"
+4. 有时二进制会依赖动态库，所以需要将 `D:\cmake_install\bin` 加入到系统环境变量中
+
+其他 `CMake` 选项还有：
+
+      CMAKE_SYSTEM_PREFIX_PATH
+
+## 编译问题
 
 1. warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 
