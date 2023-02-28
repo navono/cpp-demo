@@ -38,11 +38,14 @@ file(GLOB_RECURSE PROJECT_HEADERS
         ${CMAKE_SOURCE_DIR}/include/*.ipp)
 file(GLOB_RECURSE PROJECT_SOURCES
         ${PROJECT_SOURCE_DIR}/src/*.c
+        ${PROJECT_SOURCE_DIR}/src/*.cc
+        ${PROJECT_SOURCE_DIR}/src/*.cxx
         ${PROJECT_SOURCE_DIR}/src/*.cpp
         ${PROJECT_SOURCE_DIR}/src/*.cu)
 file(GLOB_RECURSE PROJECT_CMAKE_UTILS cmake/*.cmake)
 file(GLOB_RECURSE PROJECT_MISC *.bat *.gitignore *.md *.py *.sh *.txt)
-#aux_source_directory(./src/configData PROJECT_SOURCES)
+aux_source_directory(./src/controllers PROJECT_SOURCES)
+aux_source_directory(./src/filters PROJECT_SOURCES)
 
 if (TARGET_PLATFORM_WINDOWS)
     #      message(STATUS "Build CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}/version.rc.in")
@@ -100,6 +103,7 @@ endif ()
 list(APPEND PROJECT_LIBRARIES
         cxxopts
         libzmq
+        drogon
         demo::sharedLib
         #        fmt
         #        spdlog::spdlog

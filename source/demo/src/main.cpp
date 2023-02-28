@@ -2,6 +2,7 @@
 
 #include <cppzmq/zmq.hpp>
 #include <cppzmq/zmq_addon.hpp>
+#include <drogon/drogon.h>
 #include <thread>
 #include <future>
 #include <string>
@@ -14,6 +15,8 @@
 void PublisherThread(zmq::context_t *ctx, const std::string &addr);
 void SubscriberThread2(zmq::context_t *ctx, const std::string &addr);
 void SubscriberThread3(zmq::context_t *ctx, const std::string &addr);
+
+using namespace drogon;
 
 #ifdef _WIN32
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,
@@ -35,27 +38,31 @@ int main(int argc, char **argv) {
    *
    * Source: http://api.zeromq.org/4-3:zmq-inproc
    */
-  zmq::context_t ctx(0);
-  auto addr = "inproc://#1";
-
-  auto thread1 = std::async(std::launch::async, PublisherThread, &ctx, addr);
-
-  // Give the publisher a chance to bind, since inproc requires it
-  std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-  auto thread2 = std::async(std::launch::async, SubscriberThread2, &ctx, addr);
-  //  auto thread3 = std::async(std::launch::async, SubscriberThread3, &ctx, addr);
-  auto thread4 = std::async(std::launch::async, [&ctx, addr] {
-    lib::Hello h;
-    h.sayHello(&ctx, addr);
-  });
-
-  thread1.wait();
-  thread2.wait();
-  //  thread3.wait();
-  thread4.wait();
+  //  zmq::context_t ctx(0);
+  //  auto addr = "inproc://#1";
+  //
+  //  auto thread1 = std::async(std::launch::async, PublisherThread, &ctx, addr);
+  //
+  //  // Give the publisher a chance to bind, since inproc requires it
+  //  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  //
+  //  auto thread2 = std::async(std::launch::async, SubscriberThread2, &ctx, addr);
+  //  //  auto thread3 = std::async(std::launch::async, SubscriberThread3, &ctx, addr);
+  //  auto thread4 = std::async(std::launch::async, [&ctx, addr] {
+  //    lib::Hello h;
+  //    h.sayHello(&ctx, addr);
+  //  });
+  //
+  //  thread1.wait();
+  //  thread2.wait();
+  //  //  thread3.wait();
+  //  thread4.wait();
 
   std::cout << "Hello, World!" << std::endl;
+
+  LOG_INFO << "Server running on 127.0.0.1:8848";
+  app().addListener("127.0.0.1", 8848).run();
+
   return 0;
 }
 
