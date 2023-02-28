@@ -61,6 +61,8 @@ int main(int argc, char **argv) {
   std::cout << "Hello, World!" << std::endl;
 
   LOG_INFO << "Server running on 127.0.0.1:8848";
+  app().loadConfigFile("./config/config.json");
+  //  app().enableSession(1200);
   app().addListener("127.0.0.1", 8848).run();
 
   return 0;
