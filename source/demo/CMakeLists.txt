@@ -46,6 +46,7 @@ file(GLOB_RECURSE PROJECT_CMAKE_UTILS cmake/*.cmake)
 file(GLOB_RECURSE PROJECT_MISC *.bat *.gitignore *.md *.py *.sh *.txt)
 aux_source_directory(./src/controllers PROJECT_SOURCES)
 aux_source_directory(./src/filters PROJECT_SOURCES)
+aux_source_directory(./src/basics PROJECT_SOURCES)
 
 if (TARGET_PLATFORM_WINDOWS)
     #      message(STATUS "Build CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}/version.rc.in")
@@ -101,11 +102,12 @@ elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
 endif ()
 
 list(APPEND PROJECT_LIBRARIES
+        fmt
         cxxopts
         libzmq
         drogon
+        range-v3::range-v3
         demo::sharedLib
-        #        fmt
         #        spdlog::spdlog
         #        cppcommon
         #        sago::platform_folders

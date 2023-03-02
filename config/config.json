@@ -99,7 +99,7 @@
   "app": {
     //number_of_threads: The number of IO threads, 1 by default, if the value is set to 0, the number of threads
     //is the number of CPU cores
-    "number_of_threads": 0,
+    "number_of_threads": 4,
     //enable_session: False by default
     "enable_session": true,
     "session_timeout": 1200,
@@ -213,7 +213,7 @@
       "logfile_base_name": "demo",
       //log_size_limit: 100000000 bytes by default,
       //When the log file size reaches "log_size_limit", the log file is switched.
-      "log_size_limit": 1024,
+      "log_size_limit": 10485760,
       //log_level: "DEBUG" by default,options:"TRACE","DEBUG","INFO","WARN"
       //The TRACE level is only valid when built in DEBUG mode.
       "log_level": "TRACE"

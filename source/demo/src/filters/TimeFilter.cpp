@@ -12,6 +12,13 @@ class TimeFilter : public HttpFilter<TimeFilter> {
     // 不合法，调用 cb
     // 合法时，调用 ccb
 
+    auto &custonJson = app().getCustomConfig();
+    if (custonJson.empty()) {
+      std::cout << "empty custom config!" << std::endl;
+    } else {
+      LOG_TRACE << custonJson["realm"].asString();
+    }
+
     trantor::Date now = trantor::Date::date();
     LOG_TRACE << "";
     if (req->session()->find(VDate)) {

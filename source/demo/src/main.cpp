@@ -1,12 +1,14 @@
 #include "sharedLib/lib.h"
+#include "ranges_v3_example.h"
 
 #include <cppzmq/zmq.hpp>
 #include <cppzmq/zmq_addon.hpp>
 #include <drogon/drogon.h>
-#include <thread>
-#include <future>
 #include <string>
 #include <iostream>
+#include <thread>
+#include <future>
+#include <ranges>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -58,12 +60,17 @@ int main(int argc, char **argv) {
   //  //  thread3.wait();
   //  thread4.wait();
 
-  std::cout << "Hello, World!" << std::endl;
+  //  std::ranges::
+  //  std::views::
+  //  std::ranges::views ::
+  //  std::ranges
+  //  std::ranges::find
 
-  LOG_INFO << "Server running on 127.0.0.1:8848";
-  app().loadConfigFile("./config/config.json");
-  //  app().enableSession(1200);
-  app().addListener("127.0.0.1", 8848).run();
+  RangesV3Test();
+
+  //  std::cout << "Server running on 127.0.0.1:8848\n";
+  //  app().loadConfigFile("./config/config.json");
+  //  app().addListener("127.0.0.1", 8848).run();
 
   return 0;
 }
