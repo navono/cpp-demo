@@ -46,6 +46,7 @@ file(GLOB_RECURSE PROJECT_CMAKE_UTILS cmake/*.cmake)
 file(GLOB_RECURSE PROJECT_MISC *.bat *.gitignore *.md *.py *.sh *.txt)
 aux_source_directory(./src/controllers PROJECT_SOURCES)
 aux_source_directory(./src/filters PROJECT_SOURCES)
+aux_source_directory(./src/basics PROJECT_SOURCES)
 
 if (TARGET_PLATFORM_WINDOWS)
     #      message(STATUS "Build CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}/version.rc.in")
@@ -96,16 +97,25 @@ endif ()
 
 if (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     list(APPEND PROJECT_LIB_DIR ${CMAKE_SOURCE_DIR}/third_party/libs/Debug)
+    list(APPEND PROJECT_LIBRARIES
+            zlibd)
 elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
     list(APPEND PROJECT_LIB_DIR ${CMAKE_SOURCE_DIR}/third_party/libs/Release)
+    list(APPEND PROJECT_LIBRARIES
+            zlib)
 endif ()
 
+list(APPEND PROJECT_INCLUDE_DIRS ${CMAKE_INCLUDE_PATH})
+list(APPEND PROJECT_LIB_DIR ${CMAKE_LIBRARY_PATH})
+
 list(APPEND PROJECT_LIBRARIES
+        fmt
         cxxopts
-        libzmq
+        range-v3::range-v3
+        jsoncpp
+        trantor
         drogon
         demo::sharedLib
-        #        fmt
         #        spdlog::spdlog
         #        cppcommon
         #        sago::platform_folders
@@ -117,6 +127,7 @@ list(APPEND PROJECT_LIBRARIES
 if (TARGET_PLATFORM_WINDOWS)
     list(APPEND PROJECT_LIBRARIES
             #            hid.lib
+            Rpcrt4.lib
             ws2_32.lib
             iphlpapi.lib)
 endif ()
@@ -156,13 +167,14 @@ endif ()
 
 if (TARGET_PLATFORM_WINDOWS)
     set_target_properties(${PROJECT_NAME} PROPERTIES
-            VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
-            )
+            VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
     target_compile_definitions(${PROJECT_NAME} PRIVATE
             # Prevents Windows.h from adding unnecessary includes
             WIN32_LEAN_AND_MEAN
             # Prevents Windows.h from defining min/max as macros
             NOMINMAX)
+
+    set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY LINK_FLAGS "/NODEFAULTLIB:drogon;trantor;libzmq")
 endif ()
 
 message(STATUS "PROJECT_INCLUDE_DIRS = ${PROJECT_INCLUDE_DIRS}")

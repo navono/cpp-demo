@@ -66,4 +66,4 @@ bin
 
 # Boost lib
 !third_party/boost/stage/**
-!third_party/libs/**
+#!third_party/libs/**

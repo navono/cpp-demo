@@ -42,6 +42,7 @@ file(GLOB_RECURSE PROJECT_HEADERS
         ${CMAKE_SOURCE_DIR}/include/sharedLib/*.ipp)
 file(GLOB_RECURSE PROJECT_SOURCES
         ${PROJECT_SOURCE_DIR}/src/*.c
+        ${PROJECT_SOURCE_DIR}/src/*.cxx
         ${PROJECT_SOURCE_DIR}/src/*.cpp
         ${PROJECT_SOURCE_DIR}/src/*.cu)
 
@@ -97,6 +98,7 @@ link_libraries(${PROJECT_LIBRARIES})
 
 if (TARGET_PLATFORM_WINDOWS)
     add_compile_definitions(UNICODE _UNICODE)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif ()
 
 add_library(${PROJECT_NAME} SHARED ${PROJECT_FILES})
@@ -128,7 +130,7 @@ include(GenerateExportHeader)
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 
 generate_export_header(${PROJECT_NAME}
-        EXPORT_FILE_NAME ${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/export.hpp
+        EXPORT_FILE_NAME ${PROJECT_EXPORT_HPP}
         EXPORT_MACRO_NAME ${PROJECT_NAME_UPPER}_EXPORT
         STATIC_DEFINE ${PROJECT_NAME_UPPER}_STATIC)
 

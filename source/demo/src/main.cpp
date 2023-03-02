@@ -1,15 +1,23 @@
 #include "sharedLib/lib.h"
+#include "ranges_v3_example.h"
+#include "Config.h"
 
 #include <cppzmq/zmq.hpp>
 #include <cppzmq/zmq_addon.hpp>
 #include <drogon/drogon.h>
-#include <thread>
-#include <future>
 #include <string>
 #include <iostream>
+#include <thread>
+#include <future>
+#include <ranges>
 
 #ifdef _WIN32
 #include <Windows.h>
+#include <shellapi.h>
+
+void parseCommandLine();
+void enableWin32DebugConsole();
+
 #endif
 
 void PublisherThread(zmq::context_t *ctx, const std::string &addr);
@@ -17,12 +25,16 @@ void SubscriberThread2(zmq::context_t *ctx, const std::string &addr);
 void SubscriberThread3(zmq::context_t *ctx, const std::string &addr);
 
 using namespace drogon;
+using namespace demo;
 
 #ifdef _WIN32
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine,
                       _In_ int nCmdShow) {
   UNREFERENCED_PARAMETER(hPrevInstance);
   UNREFERENCED_PARAMETER(lpCmdLine);
+
+  parseCommandLine();
+  enableWin32DebugConsole();
 
 #else
 int main(int argc, char **argv) {
@@ -38,32 +50,38 @@ int main(int argc, char **argv) {
    *
    * Source: http://api.zeromq.org/4-3:zmq-inproc
    */
-  //  zmq::context_t ctx(0);
-  //  auto addr = "inproc://#1";
-  //
-  //  auto thread1 = std::async(std::launch::async, PublisherThread, &ctx, addr);
-  //
-  //  // Give the publisher a chance to bind, since inproc requires it
-  //  std::this_thread::sleep_for(std::chrono::milliseconds(10));
-  //
-  //  auto thread2 = std::async(std::launch::async, SubscriberThread2, &ctx, addr);
-  //  //  auto thread3 = std::async(std::launch::async, SubscriberThread3, &ctx, addr);
-  //  auto thread4 = std::async(std::launch::async, [&ctx, addr] {
-  //    lib::Hello h;
-  //    h.sayHello(&ctx, addr);
-  //  });
-  //
-  //  thread1.wait();
-  //  thread2.wait();
-  //  //  thread3.wait();
-  //  thread4.wait();
+  zmq::context_t ctx(0);
+  auto addr = "inproc://#1";
 
-  std::cout << "Hello, World!" << std::endl;
+  auto thread1 = std::async(std::launch::async, PublisherThread, &ctx, addr);
 
-  LOG_INFO << "Server running on 127.0.0.1:8848";
+  // Give the publisher a chance to bind, since inproc requires it
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+  auto thread2 = std::async(std::launch::async, SubscriberThread2, &ctx, addr);
+  //  auto thread3 = std::async(std::launch::async, SubscriberThread3, &ctx, addr);
+  auto thread4 = std::async(std::launch::async, [&ctx, addr] {
+    lib::Hello h;
+    h.sayHello(&ctx, addr);
+  });
+
+  RangesV3Test();
+
+  std::cout << "Server running on 127.0.0.1:8848" << std::endl;
+
+#ifdef _DEBUG
+  app().setLogLevel(trantor::Logger::kTrace);
+  app().enableSession(1200);
+#elif
   app().loadConfigFile("./config/config.json");
-  //  app().enableSession(1200);
+#endif
+
   app().addListener("127.0.0.1", 8848).run();
+
+  thread1.wait();
+  thread2.wait();
+  //  thread3.wait();
+  thread4.wait();
 
   return 0;
 }
@@ -117,7 +135,7 @@ void SubscriberThread3(zmq::context_t *ctx, const std::string &addr) {
   //  Thread3 opens ALL envelopes
   subscriber.set(zmq::sockopt::subscribe, "");
 
-  while (1) {
+  while (true) {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     // Receive all parts of the message
     std::vector<zmq::message_t> recv_msgs;
@@ -128,3 +146,44 @@ void SubscriberThread3(zmq::context_t *ctx, const std::string &addr) {
     std::cout << "Thread3: [" << recv_msgs[0].to_string() << "] " << recv_msgs[1].to_string() << std::endl;
   }
 }
+
+void parseCommandLine() {
+  LPWSTR *szArgList;
+  int argc;
+  szArgList = CommandLineToArgvW(GetCommandLineW(), &argc);
+  if (szArgList != nullptr) {
+    auto argv = (char **)malloc(argc * sizeof(char *));
+    for (int i = 0; i < argc; i++) {
+      LPCWSTR lpcwStr = szArgList[i];
+      int num = WideCharToMultiByte(CP_OEMCP, NULL, lpcwStr, -1, nullptr, 0, nullptr, FALSE);
+      auto param = new char[num];
+
+      WideCharToMultiByte(CP_OEMCP, NULL, lpcwStr, -1, param, num, nullptr, FALSE);
+      argv[i] = param;
+    }
+
+    Config::initializeArgs(argc, argv);
+    free(argv);
+    LocalFree(szArgList);
+  }
+}
+
+#ifdef _WIN32
+void enableWin32DebugConsole() {
+  if (Config::optDebug) {
+    AllocConsole();
+    SetConsoleTitle(L"Demo");
+    FILE *tempFile = nullptr;
+    freopen_s(&tempFile, "conin$", "r+t", stdin);
+    freopen_s(&tempFile, "conout$", "w+t", stdout);
+    return;
+  }
+#if defined(DEBUG) | defined(_DEBUG)
+  AllocConsole();
+  SetConsoleTitle(L"Demo");
+  FILE *tempFile = nullptr;
+  freopen_s(&tempFile, "conin$", "r+t", stdin);
+  freopen_s(&tempFile, "conout$", "w+t", stdout);
+#endif
+}
+#endif

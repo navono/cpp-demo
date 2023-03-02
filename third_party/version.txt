@@ -12,13 +12,6 @@
 # commit hash date: 28 Aug 2022
 # license: MIT
 
-# spdlog
-# url: https://github.com/gabime/spdlog
-# branch: 1.11.0
-# commit hash: ad0e89c
-# commit hash date: 3 Nov 2022
-# license: MIT
-
 # cxxopts
 # url: https://github.com/jarro2783/cxxopts
 # branch: 3.1.1
@@ -52,4 +45,11 @@
 # branch: 3.11.2
 # commit hash: bc889af
 # commit hash date: 12 Aug 2022
+# license: MIT
+
+# drogon
+# url: https://github.com/drogonframework/drogon
+# branch: 1.8.3
+# commit hash: bc889af
+# commit hash date: 23 Jan 2023
 # license: MIT
