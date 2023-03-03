@@ -115,6 +115,7 @@ list(APPEND PROJECT_LIBRARIES
         jsoncpp
         trantor
         drogon
+        range-v3::range-v3
         demo::sharedLib
         #        spdlog::spdlog
         #        cppcommon
