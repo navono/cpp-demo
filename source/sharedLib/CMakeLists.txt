@@ -91,11 +91,8 @@ if (TARGET_PLATFORM_WINDOWS)
             iphlpapi.lib)
 endif ()
 
-##################################################    Targets     ##################################################
-include_directories(${PROJECT_INCLUDE_DIRS})
-link_directories(${PROJECT_LIB_DIR}) # 要在 add_executable 前
-link_libraries(${PROJECT_LIBRARIES})
 
+##################################################    Targets     ##################################################
 if (TARGET_PLATFORM_WINDOWS)
     add_compile_definitions(UNICODE _UNICODE)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -109,8 +106,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:include> PRIVATE ./include)
-#target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
-#target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
+target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_LIB_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_LIBRARIES})
+
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_COMPILE_DEFINITIONS})
 target_compile_options(${PROJECT_NAME} PUBLIC ${PROJECT_COMPILE_OPTIONS})
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
@@ -134,6 +133,7 @@ generate_export_header(${PROJECT_NAME}
         EXPORT_MACRO_NAME ${PROJECT_NAME_UPPER}_EXPORT
         STATIC_DEFINE ${PROJECT_NAME_UPPER}_STATIC)
 
+
 ##################################################    Testing     ##################################################
 if (BUILD_TESTS)
     enable_testing()
@@ -153,6 +153,7 @@ if (BUILD_TESTS)
         assign_source_group(${_SOURCE})
     endforeach ()
 endif ()
+
 
 ##################################################  Installation  ##################################################
 #install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}-config

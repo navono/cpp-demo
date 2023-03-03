@@ -135,10 +135,6 @@ endif ()
 
 
 ##################################################    Targets     ##################################################
-include_directories(${PROJECT_INCLUDE_DIRS})
-link_directories(${PROJECT_LIB_DIR}) # 要在 add_executable 前
-link_libraries(${PROJECT_LIBRARIES})
-
 if (TARGET_PLATFORM_WINDOWS)
     # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
@@ -154,8 +150,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:include> PRIVATE ..)
-#target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
-#target_link_libraries     (${PROJECT_NAME} PUBLIC ${PROJECT_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INCLUDE_DIRS})
+target_link_directories(${PROJECT_NAME} PUBLIC ${PROJECT_LIB_DIR})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${PROJECT_LIBRARIES})
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC ${PROJECT_COMPILE_DEFINITIONS})
 target_compile_options(${PROJECT_NAME} PUBLIC ${PROJECT_COMPILE_OPTIONS})

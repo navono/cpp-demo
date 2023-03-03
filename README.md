@@ -14,6 +14,9 @@
 
 ## 第三方库集成
 
+目前未代码集成在 `third_party` 中的第三方库，二进制文件存放在 `third_party\libs` 下，分别是 `Debug` 和 `Release`
+目录。编译步骤参考 [find_package](#find_package)
+
 ### Boost
 
 1. 下载源码
@@ -51,7 +54,9 @@
 2. 在 `CMakeLists.txt` 中，如果是使用静态库，增加 `ZMQ_STATIC` 宏， 增加静态库 `libzmq`，同时 `Windows` 平台还需要增加 `
    iphlpapi.lib`
 
-### find_package 无法查找到库 XXX
+### find_package
+
+<span id='find_package'></span>
 
 1. `github` 上查找此库的源码，同时确认相关的版本
 2. `git clone` 到本地后，使用 `CMake` 构建并安装
