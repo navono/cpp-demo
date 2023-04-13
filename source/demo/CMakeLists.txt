@@ -59,7 +59,7 @@ set(PROJECT_FILES
         ${PROJECT_HEADERS}
         ${PROJECT_SOURCES}
         ${PROJECT_CMAKE_UTILS}
-        ${PROJECT_MISC})
+        ${PROJECT_MISC} src/fp.h)
 
 include(assign_source_group)
 assign_source_group(${PROJECT_FILES})
@@ -105,6 +105,7 @@ list(APPEND PROJECT_LIBRARIES
         libzmq
         drogon
         demo::sharedLib
+        range-v3
         #        fmt
         #        spdlog::spdlog
         #        cppcommon

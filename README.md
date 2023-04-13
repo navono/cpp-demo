@@ -72,6 +72,14 @@
 
       CMAKE_SYSTEM_PREFIX_PATH
 
+### submodule
+
+> git submodule add xxx ./third_party/xxx
+>
+> git submodule update
+>
+> git submodule update --remote
+
 ## 编译问题
 
 1. warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失

@@ -12,6 +12,8 @@
 #include <Windows.h>
 #endif
 
+#include "fp.h"
+
 void PublisherThread(zmq::context_t *ctx, const std::string &addr);
 void SubscriberThread2(zmq::context_t *ctx, const std::string &addr);
 void SubscriberThread3(zmq::context_t *ctx, const std::string &addr);
@@ -59,6 +61,8 @@ int main(int argc, char **argv) {
   //  thread4.wait();
 
   std::cout << "Hello, World!" << std::endl;
+
+  fp_demo();
 
   LOG_INFO << "Server running on 127.0.0.1:8848";
   app().loadConfigFile("./config/config.json");
