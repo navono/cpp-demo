@@ -101,6 +101,10 @@ list(APPEND PROJECT_LIBRARIES
 )
 
 if (TARGET_PLATFORM_WINDOWS)
+    # 设置使用 MFC
+    set(CMAKE_MFC_FLAG 2) # 设置为1表示使用静态链接 MFC 库；2是共享链接 MFC 库
+    set(CMAKE_GENERATOR_PLATFORM Win32)
+
     list(APPEND PROJECT_LIBRARIES
             ws2_32.lib
             iphlpapi.lib)
@@ -144,16 +148,22 @@ if (TARGET_PLATFORM_WINDOWS)
             # Prevents Windows.h from adding unnecessary includes
             WIN32_LEAN_AND_MEAN
             # Prevents Windows.h from defining min/max as macros
-            NOMINMAX)
+            NOMINMAX
+            _CRT_SECURE_NO_WARNINGS)
+
+    # 链接 MFC 库
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+            "$<$<CONFIG:Debug>:${MFC_LIB_DEBUG}>"
+            "$<$<CONFIG:Release>:${MFC_LIB_RELEASE}>")
 endif ()
 
 
 ##################################################    Postbuild   ##################################################
 # copy third party dll
-#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-#        COMMAND_EXPAND_LISTS)
-#
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND_EXPAND_LISTS)
+
 #add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 #        COMMAND ${CMAKE_COMMAND} -E copy_directory
 #        ${CMAKE_SOURCE_DIR}/config
