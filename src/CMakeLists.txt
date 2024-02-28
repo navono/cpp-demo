@@ -6,6 +6,7 @@ include(utils)
 extract_version()
 
 include(get_platform)
+include(CPM)
 
 project(cppTemplate VERSION ${DEMO_VERSION} LANGUAGES CXX)
 
@@ -84,6 +85,14 @@ include(import_library)
 #   import_library(Boost_INCLUDE_DIRS Boost_IOSTREAMS_LIBRARY_DEBUG Boost_IOSTREAMS_LIBRARY_RELEASE)
 # - You may also set the PROJECT_INCLUDE_DIRS and PROJECT_LIBRARIES instead of using import_library.
 
+CPMAddPackage(
+        NAME catch2
+        GITHUB_REPOSITORY catchorg/Catch2
+        VERSION 3.4.0
+)
+find_package(Catch2 REQUIRED)
+
+
 if (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     list(APPEND PROJECT_LIB_DIR ${CMAKE_SOURCE_DIR}/third_party/libs/Debug)
 elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
@@ -91,6 +100,7 @@ elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
 endif ()
 
 list(APPEND PROJECT_LIBRARIES
+        Catch2::Catch2
         hv
         fmt
         spdlog::spdlog
