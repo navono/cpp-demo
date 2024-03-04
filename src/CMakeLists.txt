@@ -86,14 +86,9 @@ include(import_library)
 # - You may also set the PROJECT_INCLUDE_DIRS and PROJECT_LIBRARIES instead of using import_library.
 
 
-find_package(Poco REQUIRED)
-find_package(spdlog REQUIRED)
+find_package(Poco REQUIRED Foundation)
 
 #CPMAddPackage("gh:google/double-conversion#v3.3.0")
-#CPMAddPackage(
-#        NAME boost
-#        GITHUB_REPOSITORY boostorg/boost
-#        VERSION boost-1.84.0)
 #CPMAddPackage(
 #  NAME nlohmann_json
 #  VERSION 3.7.3
@@ -101,26 +96,17 @@ find_package(spdlog REQUIRED)
 #  URL https://github.com/nlohmann/json/releases/download/v3.7.3/include.zip
 #  URL_HASH SHA256=87b5884741427220d3a33df1363ae0e8b898099fbc59f1c451113f6732891014
 #)
-
-#CPMAddPackage(
-#        NAME double-conversion
-#        GITHUB_REPOSITORY google/double-conversion
-#        VERSION 3.3.0)
 #CPMAddPackage("https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.zip")
-#CPMAddPackage("gh:fmtlib/fmt#10.2.1")
 #CPMAddPackage(
 #        NAME catch2
 #        GITHUB_REPOSITORY catchorg/Catch2
 #        VERSION 3.4.0)
-#CPMAddPackage(
-#        NAME BS_thread_pool
-#        GITHUB_REPOSITORY bshoshany/thread-pool
-#        VERSION 4.0.1)
-#CPMAddPackage(
-#        NAME spdlog
-#        GITHUB_REPOSITORY gabime/spdlog
-#        VERSION 1.13.0
-#        OPTIONS "SPDLOG_FMT_EXTERNAL ON")
+
+CPMAddPackage(
+        NAME spdlog
+        GITHUB_REPOSITORY gabime/spdlog
+        VERSION 1.13.0
+        OPTIONS "SPDLOG_FMT_EXTERNAL ON")
 CPMAddPackage(
         NAME libhv
         GITHUB_REPOSITORY ithewei/libhv
@@ -140,10 +126,8 @@ list(APPEND PROJECT_LIBRARIES
         Poco::Foundation
         spdlog::spdlog
         hv)
-#        Folly::folly
 #        Catch2::Catch2
-#        fmt
-#        spdlog::spdlog)
+#        fmt)
 
 if (TARGET_PLATFORM_WINDOWS)
     list(APPEND PROJECT_LIBRARIES
@@ -197,10 +181,10 @@ endif ()
 
 ##################################################    Postbuild   ##################################################
 # copy third party dll
-#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-#        COMMAND_EXPAND_LISTS)
-#
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        COMMAND_EXPAND_LISTS)
+
 #add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 #        COMMAND ${CMAKE_COMMAND} -E copy_directory
 #        ${CMAKE_SOURCE_DIR}/config

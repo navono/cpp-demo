@@ -67,3 +67,4 @@ bin
 # Boost lib
 !third_party/boost/stage/**
 !third_party/libs/**
+vcpkg_installed
