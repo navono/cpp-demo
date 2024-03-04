@@ -39,6 +39,17 @@
 > -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Debug
 > -DCMAKE_TOOLCHAIN_FILE=cmake-build-debug/build/generators/conan_toolchain.cmake
 
+### vcpkg
+
+1. 下载源码安装
+2. 设置系统环境变量 `VCPKG_ROOT`
+3. 清单模式下，新增 `vcpkg.json` 文件
+4. 在 `CMake` 编译选项中增加
+   > -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
+5. 在工程目录下运行
+   > vcpkg install
+6. 依赖库用法参考 `CMakeLists.txt`
+
 ### Boost
 
 1. 下载源码
