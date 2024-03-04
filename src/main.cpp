@@ -1,5 +1,10 @@
-#include "utils/XLogger.h"
+#include <BS_thread_pool.hpp>
+#include <BS_thread_pool_utils.hpp>
+#include <chrono>// std::chrono
 #include <fmt/core.h>
+#include <thread>// std::this_thread
+
+#include "utils/XLogger.h"
 
 //#ifdef _WIN32
 //#include <Windows.h>
@@ -15,9 +20,31 @@
 //int main(int argc, char **argv) {
 //#endif
 
+BS::synced_stream sync_out;
+BS::thread_pool pool(4);
+
+void sleep_half_second(const int i) {
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  sync_out.println("Task ", i, " done.");
+}
+
+void monitor_tasks() {
+  sync_out.println(pool.get_tasks_total(), " tasks total, ", pool.get_tasks_running(), " tasks running, ", pool.get_tasks_queued(), " tasks queued.");
+}
+
 int main(int argc, char **argv) {
   XLOG_TRACE("Hello");
   fmt::print("Hello");
+
+  pool.wait();
+  pool.detach_sequence(0, 12, sleep_half_second);
+  monitor_tasks();
+  std::this_thread::sleep_for(std::chrono::milliseconds(750));
+  monitor_tasks();
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  monitor_tasks();
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  monitor_tasks();
 
   return 0;
 }

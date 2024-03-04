@@ -85,19 +85,35 @@ include(import_library)
 #   import_library(Boost_INCLUDE_DIRS Boost_IOSTREAMS_LIBRARY_DEBUG Boost_IOSTREAMS_LIBRARY_RELEASE)
 # - You may also set the PROJECT_INCLUDE_DIRS and PROJECT_LIBRARIES instead of using import_library.
 
+CPMAddPackage("gh:fmtlib/fmt#10.2.1")
 CPMAddPackage(
         NAME catch2
         GITHUB_REPOSITORY catchorg/Catch2
         VERSION 3.4.0
 )
-find_package(Catch2 REQUIRED)
+CPMAddPackage(
+        NAME BS_thread_pool
+        GITHUB_REPOSITORY bshoshany/thread-pool
+        VERSION 4.0.1)
+CPMAddPackage(
+        NAME spdlog
+        GITHUB_REPOSITORY gabime/spdlog
+        VERSION 1.13.0
+        OPTIONS "SPDLOG_FMT_EXTERNAL ON")
+CPMAddPackage(
+        NAME libhv
+        GITHUB_REPOSITORY ithewei/libhv
+        VERSION 1.3.2)
 
+find_package(Catch2 REQUIRED)
 
 if (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
     list(APPEND PROJECT_LIB_DIR ${CMAKE_SOURCE_DIR}/third_party/libs/Debug)
 elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
     list(APPEND PROJECT_LIB_DIR ${CMAKE_SOURCE_DIR}/third_party/libs/Release)
 endif ()
+
+list(APPEND PROJECT_INCLUDE_DIRS ${BS_thread_pool_SOURCE_DIR}/include)
 
 list(APPEND PROJECT_LIBRARIES
         Catch2::Catch2
