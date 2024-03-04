@@ -121,10 +121,10 @@ find_package(spdlog REQUIRED)
 #        GITHUB_REPOSITORY gabime/spdlog
 #        VERSION 1.13.0
 #        OPTIONS "SPDLOG_FMT_EXTERNAL ON")
-#CPMAddPackage(
-#        NAME libhv
-#        GITHUB_REPOSITORY ithewei/libhv
-#        VERSION 1.3.2)
+CPMAddPackage(
+        NAME libhv
+        GITHUB_REPOSITORY ithewei/libhv
+        VERSION 1.3.2)
 
 
 if (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug "))
@@ -138,10 +138,10 @@ list(APPEND PROJECT_INCLUDE_DIRS ${BS_thread_pool_SOURCE_DIR}/include)
 
 list(APPEND PROJECT_LIBRARIES
         Poco::Foundation
-        spdlog::spdlog)
+        spdlog::spdlog
+        hv)
 #        Folly::folly
 #        Catch2::Catch2
-#        hv
 #        fmt
 #        spdlog::spdlog)
 

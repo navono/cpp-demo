@@ -4,6 +4,7 @@
 //#include <fmt/core.h>
 #include <Poco/DigestStream.h>
 #include <Poco/MD5Engine.h>
+#include <hv/HttpServer.h>
 #include <thread>// std::this_thread
 
 #include "utils/XLogger.h"
@@ -34,6 +35,7 @@
 //  sync_out.println(pool.get_tasks_total(), " tasks total, ", pool.get_tasks_running(), " tasks running, ", pool.get_tasks_queued(), " tasks queued.");
 //}
 
+using namespace hv;
 int main(int argc, char **argv) {
   XLOG_TRACE("Hello");
 
@@ -43,6 +45,17 @@ int main(int argc, char **argv) {
   ds.close();
   auto digest = Poco::DigestEngine::digestToHex(md5.digest());
   XLOG_TRACE("digest: {}", digest);
+
+  HttpService router;
+  router.GET("/ping", [](HttpRequest *req, HttpResponse *resp) {
+    return resp->String("pong");
+  });
+
+  XLOG_TRACE("http server running at: 8080");
+  HttpServer server(&router);
+  server.setPort(8080);
+  server.setThreadNum(4);
+  server.run();
 
   //  pool.wait();
   //  pool.detach_sequence(0, 12, sleep_half_second);
