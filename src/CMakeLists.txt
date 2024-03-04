@@ -85,46 +85,65 @@ include(import_library)
 #   import_library(Boost_INCLUDE_DIRS Boost_IOSTREAMS_LIBRARY_DEBUG Boost_IOSTREAMS_LIBRARY_RELEASE)
 # - You may also set the PROJECT_INCLUDE_DIRS and PROJECT_LIBRARIES instead of using import_library.
 
-CPMAddPackage("gh:fmtlib/fmt#10.2.1")
-CPMAddPackage(
-        NAME catch2
-        GITHUB_REPOSITORY catchorg/Catch2
-        VERSION 3.4.0
-)
-CPMAddPackage(
-        NAME BS_thread_pool
-        GITHUB_REPOSITORY bshoshany/thread-pool
-        VERSION 4.0.1)
-CPMAddPackage(
-        NAME spdlog
-        GITHUB_REPOSITORY gabime/spdlog
-        VERSION 1.13.0
-        OPTIONS "SPDLOG_FMT_EXTERNAL ON")
-CPMAddPackage(
-        NAME libhv
-        GITHUB_REPOSITORY ithewei/libhv
-        VERSION 1.3.2)
 
-find_package(Catch2 REQUIRED)
+find_package(Poco REQUIRED)
+find_package(spdlog REQUIRED)
 
-if (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+#CPMAddPackage("gh:google/double-conversion#v3.3.0")
+#CPMAddPackage(
+#        NAME boost
+#        GITHUB_REPOSITORY boostorg/boost
+#        VERSION boost-1.84.0)
+#CPMAddPackage(
+#  NAME nlohmann_json
+#  VERSION 3.7.3
+#  # the git repo is incredibly large, so we download the archived include directory
+#  URL https://github.com/nlohmann/json/releases/download/v3.7.3/include.zip
+#  URL_HASH SHA256=87b5884741427220d3a33df1363ae0e8b898099fbc59f1c451113f6732891014
+#)
+
+#CPMAddPackage(
+#        NAME double-conversion
+#        GITHUB_REPOSITORY google/double-conversion
+#        VERSION 3.3.0)
+#CPMAddPackage("https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.zip")
+#CPMAddPackage("gh:fmtlib/fmt#10.2.1")
+#CPMAddPackage(
+#        NAME catch2
+#        GITHUB_REPOSITORY catchorg/Catch2
+#        VERSION 3.4.0)
+#CPMAddPackage(
+#        NAME BS_thread_pool
+#        GITHUB_REPOSITORY bshoshany/thread-pool
+#        VERSION 4.0.1)
+#CPMAddPackage(
+#        NAME spdlog
+#        GITHUB_REPOSITORY gabime/spdlog
+#        VERSION 1.13.0
+#        OPTIONS "SPDLOG_FMT_EXTERNAL ON")
+#CPMAddPackage(
+#        NAME libhv
+#        GITHUB_REPOSITORY ithewei/libhv
+#        VERSION 1.3.2)
+
+
+if (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug "))
     list(APPEND PROJECT_LIB_DIR ${CMAKE_SOURCE_DIR}/third_party/libs/Debug)
-elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
+elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL " Release "))
     list(APPEND PROJECT_LIB_DIR ${CMAKE_SOURCE_DIR}/third_party/libs/Release)
 endif ()
 
+list(APPEND PROJECT_LIB_DIR ${CMAKE_SOURCE_DIR}/lib)
 list(APPEND PROJECT_INCLUDE_DIRS ${BS_thread_pool_SOURCE_DIR}/include)
 
 list(APPEND PROJECT_LIBRARIES
-        Catch2::Catch2
-        hv
-        fmt
-        spdlog::spdlog
-        #        cppcommon
-        #        sago::platform_folders
-        #        sqlite_orm::sqlite_orm
-        #        nlohmann_json::nlohmann_json
-)
+        Poco::Foundation
+        spdlog::spdlog)
+#        Folly::folly
+#        Catch2::Catch2
+#        hv
+#        fmt
+#        spdlog::spdlog)
 
 if (TARGET_PLATFORM_WINDOWS)
     list(APPEND PROJECT_LIBRARIES
@@ -137,10 +156,14 @@ endif ()
 include_directories(${PROJECT_INCLUDE_DIRS})
 link_directories(${PROJECT_LIB_DIR}) # 要在 add_executable 前
 link_libraries(${PROJECT_LIBRARIES})
+#target_link_libraries(cppTemplate ${PROJECT_LIBRARIES})
+
+message(STATUS "Deps libs dir: ${PROJECT_LIB_DIR}")
+message(STATUS "Deps libs: ${PROJECT_LIBRARIES}")
 
 if (TARGET_PLATFORM_WINDOWS)
-    # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
+    # set(CMAKE_EXE_LINKER_FLAGS " ${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE ")
     add_compile_definitions(UNICODE _UNICODE)
     add_executable(${PROJECT_NAME} WIN32 ${PROJECT_FILES})
 else ()
@@ -163,8 +186,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 if (TARGET_PLATFORM_WINDOWS)
     set_target_properties(${PROJECT_NAME} PROPERTIES
-            VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
-    )
+            VS_DEBUGGER_WORKING_DIRECTORY " ${CMAKE_SOURCE_DIR}/bin ")
     target_compile_definitions(${PROJECT_NAME} PRIVATE
             # Prevents Windows.h from adding unnecessary includes
             WIN32_LEAN_AND_MEAN

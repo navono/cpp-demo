@@ -14,6 +14,31 @@
 
 ## 第三方库集成
 
+### 使用 conan
+
+在 Python 环境中
+> pip install conan
+>
+
+生成默认编译器配置
+> conan profile detect --force
+
+配置生成在 `~/.conan2` 目录下，可根据实际情况生成不同的编译器选项。
+
+生成 conan 包依赖文件
+> touch conanfile.txt
+
+
+编译
+> conan install . --output-folder=build --build=missing --profile=debug
+>
+或者这样
+> conan install . --output-folder=cmake-build-debug --build=missing -s build_type=Debug
+
+在 `CLion` 中的 `CMake option` 中
+> -G "Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Debug
+> -DCMAKE_TOOLCHAIN_FILE=cmake-build-debug/build/generators/conan_toolchain.cmake
+
 ### Boost
 
 1. 下载源码
