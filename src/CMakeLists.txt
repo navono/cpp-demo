@@ -101,12 +101,13 @@ find_package(Poco REQUIRED Foundation)
 #        NAME catch2
 #        GITHUB_REPOSITORY catchorg/Catch2
 #        VERSION 3.4.0)
-
+CPMAddPackage("gh:nlohmann/json@3.11.3")
 CPMAddPackage(
         NAME spdlog
         GITHUB_REPOSITORY gabime/spdlog
         VERSION 1.13.0
         OPTIONS "SPDLOG_FMT_EXTERNAL ON")
+CPMAddPackage("https://github.com/curl/curl/releases/download/curl-8_6_0/curl-8.6.0.tar.gz")
 CPMAddPackage(
         NAME libhv
         GITHUB_REPOSITORY ithewei/libhv
@@ -125,6 +126,7 @@ list(APPEND PROJECT_INCLUDE_DIRS ${BS_thread_pool_SOURCE_DIR}/include)
 list(APPEND PROJECT_LIBRARIES
         Poco::Foundation
         spdlog::spdlog
+        nlohmann_json::nlohmann_json
         hv)
 #        Catch2::Catch2
 #        fmt)
@@ -148,7 +150,7 @@ message(STATUS "Deps libs: ${PROJECT_LIBRARIES}")
 if (TARGET_PLATFORM_WINDOWS)
     # set(CMAKE_EXE_LINKER_FLAGS " ${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE ")
-    add_compile_definitions(UNICODE _UNICODE)
+    #    add_compile_definitions(UNICODE _UNICODE)
     add_executable(${PROJECT_NAME} WIN32 ${PROJECT_FILES})
 else ()
     add_executable(${PROJECT_NAME} ${PROJECT_FILES})

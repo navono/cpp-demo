@@ -6,10 +6,16 @@
 #include <Poco/NotificationCenter.h.>
 #include <Poco/NotificationQueue.h>
 #include <Poco/ThreadPool.h>
+#include <hv/HttpClient.h>
 #include <hv/HttpServer.h>
+#include <nlohmann/json.hpp>
 #include <thread>// std::this_thread
 
+#include "convert_string.h"
 #include "utils/XLogger.h"
+#include "utils/common.h"
+
+using json = nlohmann::json;
 
 //#ifdef _WIN32
 //#include <Windows.h>
@@ -91,6 +97,40 @@ int main(int argc, char **argv) {
   HttpService router;
   router.GET("/ping", [&queue](HttpRequest *req, HttpResponse *resp) {
     queue.enqueueNotification(new DataNotification(123));
+
+    // 保存当前字符集
+    char *prevLocale = setlocale(LC_ALL, NULL);
+    if (prevLocale == NULL) {
+      // 处理获取当前字符集失败的情况
+      return -1;
+    }
+    // 分配内存保存当前字符集
+    char *prevLocaleCopy = strdup(prevLocale);
+    if (prevLocaleCopy == NULL) {
+      // 处理内存分配失败的情况
+      return -1;
+    }
+    // 设置字符集为 UTF-8
+    setlocale(LC_ALL, "en_US.UTF-8");
+
+    HttpClient client;
+    HttpResponse weedRsp;
+    HttpRequest weedReq;
+
+    weedReq.method = HTTP_POST;
+    weedReq.url = "http://localhost:8888/test/";
+    weedReq.FormFile("悔恨", "F:\\悔恨.jpg");
+    auto ret = client.send(&weedReq, &weedRsp);
+    if (ret != 0) {
+      XLOG_ERROR("send request to weed failed");
+    }
+    auto respBody = json::parse(weedRsp.body);
+    XLOG_DEBUG("weed response: {}", respBody.dump(2));
+
+    // 发送完成后，恢复之前的字符集
+    setlocale(LC_ALL, prevLocaleCopy);
+    // 释放 prevLocale 指针
+    free(prevLocaleCopy);
     return resp->String("pong");
   });
   router.GET("/stop", [&queue](HttpRequest *req, HttpResponse *resp) {
@@ -98,9 +138,9 @@ int main(int argc, char **argv) {
     return resp->String("stopped");
   });
 
-  XLOG_TRACE("http server running at: 8080");
+  XLOG_TRACE("http server running at: 18088");
   HttpServer server(&router);
-  server.setPort(8080);
+  server.setPort(18088);
   server.setThreadNum(4);
   server.run();
 
